@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteboard - AP Physics 2</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/tools-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Whiteboard Specific Styles */
+        .whiteboard-container {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1.5rem;
+            height: calc(100vh - 200px);
+        }
+
+        @media (max-width: 1024px) {
+            .whiteboard-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        /* Tools Panel */
+        .tools-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-width: 250px;
+        }
+
+        .tool-group {
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 1rem;
+        }
+
+        .tool-group:last-child {
+            border-bottom: none;
+        }
+
+        .tool-group h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Color Palette */
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border-color: var(--dark);
+            transform: scale(1.1);
+        }
+
+        /* Brush Size */
+        .brush-sizes {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .size-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .size-btn:hover {
+            background: #ddd;
+        }
+
+        .size-btn.active {
+            border-color: var(--primary);
+            background: #e3e9ff;
+        }
+
+        .size-preview {
+            display: inline-block;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Tool Buttons */
+        .tool-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .tool-btn {
+            padding: 0.75rem;
+            background: var(--light);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: var(--light-gray);
+            transform: translateY(-2px);
+        }
+
+        .tool-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .canvas-header h2 {
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .canvas-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #drawingCanvas {
+            flex: 1;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            cursor: crosshair;
+            background: #fafafa;
+            touch-action: none;
+        }
+
+        /* Templates */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .template-btn {
+            padding: 0.75rem;
+            background: var(--light);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .template-btn:hover {
+            background: var(--light-gray);
+        }
+
+        /* Saved Drawings */
+        .drawings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .drawing-thumbnail {
+            position: relative;
+            cursor: pointer;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .drawing-thumbnail:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .drawing-thumbnail.active {
+            border-color: var(--primary);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .drawing-thumbnail img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background: white;
+        }
+
+        .drawing-info {
+            padding: 0.5rem;
+            background: white;
+        }
+
+        .drawing-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .drawing-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .drawing-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawing-thumbnail:hover .drawing-actions {
+            opacity: 1;
+        }
+
+        .drawing-action-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Drawing Info */
+        .drawing-info-panel {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .drawing-info-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .drawing-info-form input,
+        .drawing-info-form textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .drawing-info-form textarea {
+            height: 100px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-atom"></i>
+            <span>AP Physics 2 Hub</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="../tools/calculator.html"><i class="fas fa-calculator"></i> Calculator</a></li>
+            <li><a href="../tools/timer.html"><i class="fas fa-stopwatch"></i> Timer</a></li>
+            <li><a href="../tools/whiteboard.html" class="active"><i class="fas fa-draw-polygon"></i> Whiteboard</a></li>
+            <li><a href="../tools/practice.html"><i class="fas fa-clipboard-list"></i> Practice</a></li>
+            <li><a href="../diagrams.html"><i class="fas fa-images"></i> Gallery</a></li>
+        </ul>
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1><i class="fas fa-draw-polygon"></i> Physics Whiteboard</h1>
+        <p class="subtitle">Draw circuits, PV diagrams, optics diagrams, and more. Save and organize your drawings.</p>
+
+        <div class="whiteboard-container">
+            <!-- Tools Panel -->
+            <div class="tools-panel">
+                <!-- Drawing Tools -->
+                <div class="tool-group">
+                    <h3><i class="fas fa-paint-brush"></i> Tools</h3>
+                    <div class="tool-buttons">
+                        <button class="tool-btn active" data-tool="pen">
+                            <i class="fas fa-pen"></i>
+                            <span>Pen</span>
+                        </button>
+                        <button class="tool-btn" data-tool="eraser">
+                            <i class="fas fa-eraser"></i>
+                            <span>Eraser</span>
+                        </button>
+                        <button class="tool-btn" data-tool="line">
+                            <i class="fas fa-minus"></i>
+                            <span>Line</span>
+                        </button>
+                        <button class="tool-btn" data-tool="rectangle">
+                            <i class="fas fa-square"></i>
+                            <span>Rect</span>
+                        </button>
+                        <button class="tool-btn" data-tool="circle">
+                            <i class="fas fa-circle"></i>
+                            <span>Circle</span>
+                        </button>
+                        <button class="tool-btn" data-tool="text">
+                            <i class="fas fa-font"></i>
+                            <span>Text</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Color Palette -->
+                <div class="tool-group">
+                    <h3><i class="fas fa-palette"></i> Colors</h3>
+                    <div class="color-palette">
+                        <button class="color-btn active" style="background: #000000;" data-color="#000000"></button>
+                        <button class="color-btn" style="background: #e74c3c;" data-color="#e74c3c"></button>
+                        <button class="color-btn" style="background: #3498db;" data-color="#3498db"></button>
+                        <button class="color-btn" style="background: #2ecc71;" data-color="#2ecc71"></button>
+                        <button class="color-btn" style="background: #f39c12;" data-color="#f39c12"></button>
+                        <button class="color-btn" style="background: #9b59b6;" data-color="#9b59b6"></button>
+                        <button class="color-btn" style="background: #1abc9c;" data-color="#1abc9c"></button>
+                        <button class="color-btn" style="background: #34495e;" data-color="#34495e"></button>
+                        <button class="color-btn" style="background: #ffffff; border: 1px solid #ddd;" data-color="#ffffff"></button>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <input type="color" id="customColor" value="#000000" style="width: 100%;">
+                    </div>
+                </div>
+
+                <!-- Brush Size -->
+                <div class="tool-group">
+                    <h3><i class="fas fa-sliders-h"></i> Brush Size</h3>
+                    <div class="brush-sizes">
+                        <button class="size-btn active" data-size="2">
+                            <span class="size-preview" style="width: 4px; height: 4px;"></span>
+                        </button>
+                        <button class="size-btn" data-size="4">
+                            <span class="size-preview" style="width: 8px; height: 8px;"></span>
+                        </button>
+                        <button class="size-btn" data-size="6">
+                            <span class="size-preview" style="width: 12px; height: 12px;"></span>
+                        </button>
+                        <button class="size-btn" data-size="8">
+                            <span class="size-preview" style="width: 16px; height: 16px;"></span>
+                        </button>
+                        <button class="size-btn" data-size="12">
+                            <span class="size-preview" style="width: 20px; height: 20px;"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Physics Templates -->
+                <div class="tool-group">
+                    <h3><i class="fas fa-th-large"></i> Templates</h3>
+                    <div class="templates-grid">
+                        <button class="template-btn" data-template="circuit">
+                            <i class="fas fa-bolt"></i>
+                            <div>Circuit</div>
+                        </button>
+                        <button class="template-btn" data-template="pv">
+                            <i class="fas fa-chart-line"></i>
+                            <div>PV Diagram</div>
+                        </button>
+                        <button class="template-btn" data-template="lens">
+                            <i class="fas fa-eye"></i>
+                            <div>Lens Diagram</div>
+                        </button>
+                        <button class="template-btn" data-template="wave">
+                            <i class="fas fa-wave-square"></i>
+                            <div>Wave Graph</div>
+                        </button>
+                        <button class="template-btn" data-template="axes">
+                            <i class="fas fa-chart-bar"></i>
+                            <div>Coordinate Axes</div>
+                        </button>
+                        <button class="template-btn" data-template="freeBody">
+                            <i class="fas fa-arrows-alt"></i>
+                            <div>Free Body</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="tool-group">
+                    <h3><i class="fas fa-cogs"></i> Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button onclick="clearCanvas()" class="btn">
+                            <i class="fas fa-trash"></i> Clear Canvas
+                        </button>
+                        <button onclick="saveDrawing()" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Drawing
+                        </button>
+                        <button onclick="exportDrawing()" class="btn">
+                            <i class="fas fa-download"></i> Export PNG
+                        </button>
+                        <button onclick="printDrawing()" class="btn">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Canvas Area -->
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <h2><i class="fas fa-draw-polygon"></i> Drawing Canvas</h2>
+                    <div class="canvas-controls">
+                        <button onclick="undo()" class="btn" id="undoBtn" title="Undo">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button onclick="redo()" class="btn" id="redoBtn" title="Redo">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button onclick="toggleGrid()" class="btn" id="gridBtn" title="Toggle Grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <canvas id="drawingCanvas" width="1200" height="700">
+                    Your browser does not support the canvas element.
+                </canvas>
+
+                <!-- Drawing Info Form -->
+                <div class="drawing-info-panel" id="drawingInfoPanel" style="display: none;">
+                    <h3><i class="fas fa-info-circle"></i> Save Drawing</h3>
+                    <div class="drawing-info-form">
+                        <input type="text" id="drawingName" placeholder="Drawing Name (e.g., 'Circuit Diagram 1')" maxlength="50">
+                        <textarea id="drawingDescription" placeholder="Description (optional)"></textarea>
+                        <select id="drawingCategory">
+                            <option value="">Select Category</option>
+                            <option value="circuit">Circuit Diagram</option>
+                            <option value="thermo">PV Diagram</option>
+                            <option value="optics">Optics Diagram</option>
+                            <option value="wave">Wave Diagram</option>
+                            <option value="magnet">Magnetic Field</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="confirmSave()" class="btn btn-success">
+                                <i class="fas fa-check"></i> Save
+                            </button>
+                            <button onclick="cancelSave()" class="btn">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Drawings Gallery -->
+        <div class="tool-section" style="margin-top: 2rem;">
+            <h2><i class="fas fa-images"></i> Your Saved Drawings</h2>
+            <div class="drawings-grid" id="drawingsGrid">
+                <!-- Drawings will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="../script.js"></script>
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Drawing state
+        let drawingState = {
+            isDrawing: false,
+            currentTool: 'pen',
+            color: '#000000',
+            brushSize: 2,
+            lastX: 0,
+            lastY: 0,
+            history: [],
+            historyIndex: -1,
+            shapes: [],
+            currentShape: null,
+            gridVisible: false
+        };
+
+        // Initialize canvas
+        function initCanvas() {
+            // Set canvas size to match display
+            const container = canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = container.clientWidth * dpr;
+            canvas.height = container.clientHeight * dpr;
+            
+            ctx.scale(dpr, dpr);
+            canvas.style.width = `${container.clientWidth}px`;
+            canvas.style.height = `${container.clientHeight}px`;
+            
+            // Set default styles
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = drawingState.color;
+            ctx.fillStyle = drawingState.color;
+            ctx.lineWidth = drawingState.brushSize;
+            
+            // Clear canvas with white background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width/dpr, canvas.height/dpr);
+            
+            // Add to history
+            saveToHistory();
+            
+            // Load saved drawings
+            loadSavedDrawings();
+            
+            // Setup event listeners
+            setupEventListeners();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            // Prevent scrolling on touch
+            canvas.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+            
+            // Tool selection
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    drawingState.currentTool = this.dataset.tool;
+                });
+            });
+            
+            // Color selection
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    drawingState.color = this.dataset.color;
+                    ctx.strokeStyle = drawingState.color;
+                    ctx.fillStyle = drawingState.color;
+                });
+            });
+            
+            // Custom color picker
+            document.getElementById('customColor').addEventListener('change', function() {
+                drawingState.color = this.value;
+                ctx.strokeStyle = drawingState.color;
+                ctx.fillStyle = drawingState.color;
+                
+                // Update active color button
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            });
+            
+            // Brush size
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    drawingState.brushSize = parseInt(this.dataset.size);
+                    ctx.lineWidth = drawingState.brushSize;
+                });
+            });
+            
+            // Templates
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    loadTemplate(this.dataset.template);
+                });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        // Drawing functions
+        function startDrawing(e) {
+            e.preventDefault();
+            const { offsetX, offsetY } = getCoordinates(e);
+            
+            drawingState.isDrawing = true;
+            drawingState.lastX = offsetX;
+            drawingState.lastY = offsetY;
+            
+            if (drawingState.currentTool === 'rectangle' || drawingState.currentTool === 'circle') {
+                drawingState.currentShape = {
+                    type: drawingState.currentTool,
+                    startX: offsetX,
+                    startY: offsetY,
+                    endX: offsetX,
+                    endY: offsetY
+                };
+            } else if (drawingState.currentTool === 'text') {
+                const text = prompt('Enter text:', 'Text');
+                if (text) {
+                    ctx.font = `${drawingState.brushSize * 3}px Arial`;
+                    ctx.fillText(text, offsetX, offsetY);
+                    saveToHistory();
+                }
+            }
+        }
+
+        function draw(e) {
+            e.preventDefault();
+            if (!drawingState.isDrawing) return;
+            
+            const { offsetX, offsetY } = getCoordinates(e);
+            
+            switch(drawingState.currentTool) {
+                case 'pen':
+                    ctx.beginPath();
+                    ctx.moveTo(drawingState.lastX, drawingState.lastY);
+                    ctx.lineTo(offsetX, offsetY);
+                    ctx.stroke();
+                    drawingState.lastX = offsetX;
+                    drawingState.lastY = offsetY;
+                    break;
+                    
+                case 'eraser':
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.arc(offsetX, offsetY, drawingState.brushSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                    break;
+                    
+                case 'line':
+                    // Redraw previous state
+                    restoreFromHistory();
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(drawingState.lastX, drawingState.lastY);
+                    ctx.lineTo(offsetX, offsetY);
+                    ctx.stroke();
+                    break;
+                    
+                case 'rectangle':
+                case 'circle':
+                    // Update current shape
+                    drawingState.currentShape.endX = offsetX;
+                    drawingState.currentShape.endY = offsetY;
+                    
+                    // Redraw previous state
+                    restoreFromHistory();
+                    
+                    // Draw current shape
+                    drawShape(drawingState.currentShape);
+                    break;
+            }
+        }
+
+        function stopDrawing() {
+            if (drawingState.isDrawing) {
+                drawingState.isDrawing = false;
+                if (drawingState.currentShape) {
+                    drawingState.shapes.push({...drawingState.currentShape});
+                    drawingState.currentShape = null;
+                }
+                saveToHistory();
+            }
+        }
+
+        function getCoordinates(e) {
+            let offsetX, offsetY;
+            
+            if (e.type.includes('touch')) {
+                const rect = canvas.getBoundingClientRect();
+                offsetX = e.touches[0].clientX - rect.left;
+                offsetY = e.touches[0].clientY - rect.top;
+            } else {
+                offsetX = e.offsetX;
+                offsetY = e.offsetY;
+            }
+            
+            return { offsetX, offsetY };
+        }
+
+        function handleTouchStart(e) {
+    e.preventDefault();
+    startDrawing(e);
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    draw(e);
+}
+
+        // Shape drawing
+        function drawShape(shape) {
+            const { type, startX, startY, endX, endY } = shape;
+            const width = endX - startX;
+            const height = endY - startY;
+            
+            if (type === 'rectangle') {
+                ctx.strokeRect(startX, startY, width, height);
+            } else if (type === 'circle') {
+                const radius = Math.sqrt(width * width + height * height);
+                ctx.beginPath();
+                ctx.arc(startX, startY, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        // History functions
+        function saveToHistory() {
+            // Remove any future states if we're not at the end
+            if (drawingState.historyIndex < drawingState.history.length - 1) {
+                drawingState.history = drawingState.history.slice(0, drawingState.historyIndex + 1);
+            }
+            
+            // Save current state
+            drawingState.history.push(canvas.toDataURL());
+            drawingState.historyIndex++;
+            
+            // Update undo/redo buttons
+            updateHistoryButtons();
+        }
+
+        function restoreFromHistory() {
+            if (drawingState.history.length === 0) return;
+            
+            const img = new Image();
+            img.src = drawingState.history[drawingState.historyIndex];
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
+        }
+
+        function undo() {
+            if (drawingState.historyIndex > 0) {
+                drawingState.historyIndex--;
+                restoreFromHistory();
+                updateHistoryButtons();
+            }
+        }
+
+        function redo() {
+            if (drawingState.historyIndex < drawingState.history.length - 1) {
+                drawingState.historyIndex++;
+                restoreFromHistory();
+                updateHistoryButtons();
+            }
+        }
+
+        function updateHistoryButtons() {
+            document.getElementById('undoBtn').disabled = drawingState.historyIndex <= 0;
+            document.getElementById('redoBtn').disabled = drawingState.historyIndex >= drawingState.history.length - 1;
+        }
+
+        // Canvas actions
+        function clearCanvas() {
+            if (confirm('Clear the entire canvas?')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                drawingState.shapes = [];
+                drawingState.history = [];
+                saveToHistory();
+            }
+        }
+
+        function toggleGrid() {
+            drawingState.gridVisible = !drawingState.gridVisible;
+            const gridBtn = document.getElementById('gridBtn');
+            gridBtn.classList.toggle('active', drawingState.gridVisible);
+            
+            if (drawingState.gridVisible) {
+                drawGrid();
+            } else {
+                restoreFromHistory();
+            }
+        }
+
+        function drawGrid() {
+            const spacing = 20;
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+            ctx.lineWidth = 1;
+            
+            // Vertical lines
+            for (let x = 0; x <= canvas.width; x += spacing) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            // Horizontal lines
+            for (let y = 0; y <= canvas.height; y += spacing) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        // Template functions
+        function loadTemplate(templateType) {
+            // Save current state
+            saveToHistory();
+            
+            // Clear canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw template
+            switch(templateType) {
+                case 'circuit':
+                    drawCircuitTemplate();
+                    break;
+                case 'pv':
+                    drawPVTemplate();
+                    break;
+                case 'lens':
+                    drawLensTemplate();
+                    break;
+                case 'wave':
+                    drawWaveTemplate();
+                    break;
+                case 'axes':
+                    drawAxesTemplate();
+                    break;
+                case 'freeBody':
+                    drawFreeBodyTemplate();
+                    break;
+            }
+            
+            saveToHistory();
+        }
+
+        function drawCircuitTemplate() {
+            ctx.save();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            
+            // Battery
+            ctx.strokeRect(50, 150, 20, 60);
+            ctx.fillText('+', 55, 140);
+            ctx.fillText('-', 55, 225);
+            
+            // Resistor
+            ctx.beginPath();
+            ctx.moveTo(100, 180);
+            ctx.lineTo(150, 180);
+            ctx.stroke();
+            
+            // Wires
+            ctx.beginPath();
+            ctx.moveTo(70, 150);
+            ctx.lineTo(100, 150);
+            ctx.lineTo(100, 180);
+            ctx.moveTo(150, 180);
+            ctx.lineTo(150, 210);
+            ctx.lineTo(70, 210);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function drawPVTemplate() {
+            ctx.save();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            
+            // Axes
+            ctx.beginPath();
+            ctx.moveTo(100, 50);
+            ctx.lineTo(100, 300);
+            ctx.moveTo(100, 300);
+            ctx.lineTo(400, 300);
+            ctx.stroke();
+            
+            // Labels
+            ctx.fillText('Pressure (P)', 50, 30);
+            ctx.fillText('Volume (V)', 420, 320);
+            
+            // Isotherm curve
+            ctx.beginPath();
+            ctx.moveTo(150, 250);
+            ctx.bezierCurveTo(200, 200, 250, 180, 350, 150);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function drawLensTemplate() {
+            ctx.save();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            
+            // Lens
+            ctx.beginPath();
+            ctx.arc(300, 200, 100, Math.PI * 0.3, Math.PI * 0.7);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(300, 200, 100, Math.PI * 1.3, Math.PI * 1.7);
+            ctx.stroke();
+            
+            // Principal axis
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(550, 200);
+            ctx.stroke();
+            
+            // Focal points
+            ctx.beginPath();
+            ctx.arc(200, 200, 5, 0, Math.PI * 2);
+            ctx.arc(400, 200, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillText('F', 195, 190);
+            ctx.fillText('F', 395, 190);
+            
+            ctx.restore();
+        }
+
+        function drawWaveTemplate() {
+            ctx.save();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            
+            // Wave
+            ctx.beginPath();
+            for (let x = 50; x <= 550; x += 5) {
+                const y = 200 + 50 * Math.sin((x - 50) * 0.05);
+                if (x === 50) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Axes
+            ctx.strokeStyle = '#666';
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(550, 200);
+            ctx.moveTo(50, 100);
+            ctx.lineTo(50, 300);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function drawAxesTemplate() {
+            ctx.save();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            
+            // X and Y axes
+            ctx.beginPath();
+            ctx.moveTo(100, 250);
+            ctx.lineTo(500, 250);
+            ctx.moveTo(300, 50);
+            ctx.lineTo(300, 450);
+            ctx.stroke();
+            
+            // Arrowheads
+            ctx.beginPath();
+            ctx.moveTo(500, 250);
+            ctx.lineTo(490, 240);
+            ctx.lineTo(490, 260);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(300, 50);
+            ctx.lineTo(290, 60);
+            ctx.lineTo(310, 60);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Labels
+            ctx.fillText('x', 510, 245);
+            ctx.fillText('y', 310, 40);
+            
+            ctx.restore();
+        }
+
+        function drawFreeBodyTemplate() {
+            ctx.save();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            
+            // Object
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(250, 150, 100, 50);
+            
+            // Forces
+            // Gravity
+            drawArrow(300, 200, 300, 350, '#e74c3c', 'mg');
+            // Normal
+            drawArrow(300, 150, 300, 50, '#2ecc71', 'N');
+            // Applied
+            drawArrow(350, 175, 450, 175, '#f39c12', 'F');
+            // Friction
+            drawArrow(250, 175, 150, 175, '#9b59b6', 'f');
+            
+            ctx.restore();
+        }
+
+        function drawArrow(fromX, fromY, toX, toY, color, label) {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 2;
+            
+            // Arrow line
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+            
+            // Arrowhead
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            const headlen = 10;
+            
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(
+                toX - headlen * Math.cos(angle - Math.PI / 6),
+                toY - headlen * Math.sin(angle - Math.PI / 6)
+            );
+            ctx.lineTo(
+                toX - headlen * Math.cos(angle + Math.PI / 6),
+                toY - headlen * Math.sin(angle + Math.PI / 6)
+            );
+            ctx.closePath();
+            ctx.fill();
+            
+            // Label
+            ctx.fillText(
+                label,
+                (fromX + toX) / 2,
+                (fromY + toY) / 2 - 10
+            );
+            
+            ctx.restore();
+        }
+
+        // Save and load drawings
+        function saveDrawing() {
+            document.getElementById('drawingInfoPanel').style.display = 'block';
+        }
+
+        function confirmSave() {
+            const name = document.getElementById('drawingName').value.trim();
+            const description = document.getElementById('drawingDescription').value.trim();
+            const category = document.getElementById('drawingCategory').value;
+            
+            if (!name) {
+                alert('Please enter a name for your drawing');
+                return;
+            }
+            
+            if (!category) {
+                alert('Please select a category');
+                return;
+            }
+            
+            const drawingData = {
+                id: Date.now(),
+                name: name,
+                description: description,
+                category: category,
+                data: canvas.toDataURL(),
+                date: new Date().toISOString(),
+                timestamp: Date.now()
+            };
+            
+            // Save to localStorage
+            let drawings = JSON.parse(localStorage.getItem('physicsDrawings') || '[]');
+            drawings.push(drawingData);
+            localStorage.setItem('physicsDrawings', JSON.stringify(drawings));
+            
+            // Reset form
+            document.getElementById('drawingName').value = '';
+            document.getElementById('drawingDescription').value = '';
+            document.getElementById('drawingCategory').value = '';
+            document.getElementById('drawingInfoPanel').style.display = 'none';
+            
+            // Reload gallery
+            loadSavedDrawings();
+            
+            alert('Drawing saved successfully!');
+        }
+
+        function cancelSave() {
+            document.getElementById('drawingInfoPanel').style.display = 'none';
+            document.getElementById('drawingName').value = '';
+            document.getElementById('drawingDescription').value = '';
+            document.getElementById('drawingCategory').value = '';
+        }
+
+        // In tools/whiteboard.html, replace the loadSavedDrawings() function with this:
+function loadSavedDrawings() {
+    const drawings = JSON.parse(localStorage.getItem('physicsDrawings') || '[]');
+    const grid = document.getElementById('drawingsGrid');
+    
+    if (drawings.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--gray);">No saved drawings yet. Create one above!</p>';
+        return;
+    }
+    
+    // Sort by most recent
+    drawings.sort((a, b) => b.timestamp - a.timestamp);
+    
+    grid.innerHTML = drawings.map(drawing => {
+        // Escape HTML in text to prevent XSS
+        const safeName = drawing.name.replace(/[&<>"']/g, function(m) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[m];
+        });
+        
+        const safeDescription = drawing.description ? 
+            drawing.description.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[m];
+            }) : '';
+        
+        return `
+            <div class="drawing-thumbnail" data-id="${drawing.id}" onclick="loadDrawing(${drawing.id})">
+                <img src="${drawing.data}" alt="${safeName}">
+                <div class="drawing-actions">
+                    <button class="drawing-action-btn" onclick="deleteDrawing(${drawing.id}); event.stopPropagation();" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="drawing-action-btn" onclick="exportDrawing(${drawing.id}); event.stopPropagation();" title="Export">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="drawing-info">
+                    <div class="drawing-name">${safeName}</div>
+                    <div class="drawing-date">${new Date(drawing.date).toLocaleDateString()}</div>
+                    <div class="drawing-category">${drawing.category}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+        function loadDrawing(id) {
+            const drawings = JSON.parse(localStorage.getItem('physicsDrawings') || '[]');
+            const drawing = drawings.find(d => d.id === id);
+            
+            if (drawing) {
+                // Save current state to history
+                saveToHistory();
+                
+                // Load the drawing
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    saveToHistory();
+                };
+                img.src = drawing.data;
+                
+                // Show notification
+                alert(`Loaded: ${drawing.name}`);
+            }
+        }
+
+        function deleteDrawing(id) {
+            if (confirm('Are you sure you want to delete this drawing?')) {
+                let drawings = JSON.parse(localStorage.getItem('physicsDrawings') || '[]');
+                drawings = drawings.filter(d => d.id !== id);
+                localStorage.setItem('physicsDrawings', JSON.stringify(drawings));
+                loadSavedDrawings();
+            }
+        }
+
+        function exportDrawing(id = null) {
+            let dataUrl;
+            
+            if (id) {
+                const drawings = JSON.parse(localStorage.getItem('physicsDrawings') || '[]');
+                const drawing = drawings.find(d => d.id === id);
+                if (drawing) {
+                    dataUrl = drawing.data;
+                }
+            } else {
+                dataUrl = canvas.toDataURL('image/png');
+            }
+            
+            if (dataUrl) {
+                const link = document.createElement('a');
+                link.download = `physics-drawing-${new Date().toISOString().slice(0,10)}.png`;
+                link.href = dataUrl;
+                link.click();
+            }
+        }
+
+        function printDrawing() {
+            const dataUrl = canvas.toDataURL('image/png');
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+    <html>
+        <head>
+            <title>Print Drawing</title>
+            <style>
+                body { margin: 0; padding: 20px; text-align: center; }
+                img { max-width: 100%; height: auto; }
+            </style>
+        </head>
+        <body>
+            <img src="${dataUrl}" alt="Physics Drawing">
+            <script>
+                window.onload = () => window.print();
+            <\/script>
+        </body>
+    </html>
+`);
+            printWindow.document.close();
+        }
+
+        // Keyboard shortcuts
+        function handleKeyboardShortcuts(e) {
+            // Don't trigger if typing in input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            // Ctrl+Z: Undo
+            if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                undo();
+            }
+            
+            // Ctrl+Y or Ctrl+Shift+Z: Redo
+            if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z')) {
+                e.preventDefault();
+                redo();
+            }
+            
+            // Ctrl+S: Save
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveDrawing();
+            }
+            
+            // Ctrl+E: Export
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                exportDrawing();
+            }
+            
+            // Ctrl+D: Clear
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                clearCanvas();
+            }
+            
+            // Number keys for tools
+            if (!isNaN(e.key) && e.key >= '1' && e.key <= '6') {
+                const tools = ['pen', 'eraser', 'line', 'rectangle', 'circle', 'text'];
+                const index = parseInt(e.key) - 1;
+                if (index < tools.length) {
+                    drawingState.currentTool = tools[index];
+                    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelector(`[data-tool="${tools[index]}"]`).classList.add('active');
+                }
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initCanvas();
+            
+            // Handle window resize
+            window.addEventListener('resize', initCanvas);
+        });
+    </script>
+</body>
+</html>
