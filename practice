@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Problems - AP Physics 2</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/tools-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Practice Problems Specific Styles */
+        .practice-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .practice-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Filters Sidebar */
+        .filters-sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .filter-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Difficulty Filter */
+        .difficulty-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .difficulty-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .difficulty-badge:hover {
+            opacity: 0.9;
+        }
+
+        .difficulty-badge.active {
+            border-color: var(--dark);
+        }
+
+        .difficulty-badge.easy {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .difficulty-badge.medium {
+            background: #f39c12;
+            color: white;
+        }
+
+        .difficulty-badge.hard {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .difficulty-badge.frq {
+            background: #3498db;
+            color: white;
+        }
+
+        /* Search Box */
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Problems Grid */
+        .problems-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .problem-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .problem-number {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .problem-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .problem-tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--light);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--dark);
+        }
+
+        .problem-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .problem-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .problem-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        /* MCQ Options */
+        .mcq-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .mcq-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mcq-option:hover {
+            background: #e9ecef;
+        }
+
+        .mcq-option.selected {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        .mcq-option.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        .mcq-option.incorrect {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .mcq-option.selected .option-letter,
+        .mcq-option.correct .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Solutions Panel */
+        .solution-panel {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .solution-panel.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .solution-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Statistics */
+        .stats-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Timer Integration */
+        .timer-integration {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            font-family: monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--light-gray);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-atom"></i>
+            <span>AP Physics 2 Hub</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="../tools/calculator.html"><i class="fas fa-calculator"></i> Calculator</a></li>
+            <li><a href="../tools/timer.html"><i class="fas fa-stopwatch"></i> Timer</a></li>
+            <li><a href="../tools/whiteboard.html"><i class="fas fa-draw-polygon"></i> Whiteboard</a></li>
+            <li><a href="../tools/practice.html" class="active"><i class="fas fa-clipboard-list"></i> Practice</a></li>
+        </ul>
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1><i class="fas fa-clipboard-list"></i> Practice Problems</h1>
+        <p class="subtitle">Test your knowledge with AP Physics 2 practice questions and full-length exams</p>
+
+        <!-- Timer Integration -->
+        <div class="timer-integration">
+            <h3><i class="fas fa-stopwatch"></i> Exam Timer</h3>
+            <p>Simulate real exam conditions with timed practice sessions</p>
+            <div class="timer-display" id="examTimer">90:00</div>
+            <div class="timer-controls">
+                <button onclick="startExamTimer()" class="btn" id="startTimerBtn">
+                    <i class="fas fa-play"></i> Start Exam
+                </button>
+                <button onclick="pauseExamTimer()" class="btn" id="pauseTimerBtn" style="display: none;">
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button onclick="resetExamTimer()" class="btn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <select id="examDuration" onchange="changeExamDuration()">
+                    <option value="90">Full Exam (90 min)</option>
+                    <option value="45">Half Exam (45 min)</option>
+                    <option value="25">Section (25 min)</option>
+                    <option value="15">Quick Quiz (15 min)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-panel">
+            <h3><i class="fas fa-chart-bar"></i> Your Practice Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalAttempted">0</div>
+                    <div class="stat-label">Problems Attempted</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="correctRate">0%</div>
+                    <div class="stat-label">Correct Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avgTime">0s</div>
+                    <div class="stat-label">Avg Time/Problem</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="streak">0</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="practice-container">
+            <!-- Filters Sidebar -->
+            <div class="filters-sidebar">
+                <div class="search-box">
+                    <input type="text" id="problemSearch" placeholder="Search problems..." oninput="filterProblems()">
+                </div>
+
+                <div class="filter-group">
+                    <h3><i class="fas fa-filter"></i> Unit Filter</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="checkbox" id="unit9" checked onchange="filterProblems()">
+                            <label for="unit9">Unit 9: Thermodynamics</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="unit10" checked onchange="filterProblems()">
+                            <label for="unit10">Unit 10: Electric Force</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="unit11" checked onchange="filterProblems()">
+                            <label for="unit11">Unit 11: Circuits</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="unit12" checked onchange="filterProblems()">
+                            <label for="unit12">Unit 12: Magnetism</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="unit13" checked onchange="filterProblems()">
+                            <label for="unit13">Unit 13: Optics</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="unit14" checked onchange="filterProblems()">
+                            <label for="unit14">Unit 14: Waves</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="unit15" checked onchange="filterProblems()">
+                            <label for="unit15">Unit 15: Modern Physics</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3><i class="fas fa-tachometer-alt"></i> Difficulty</h3>
+                    <div class="difficulty-badges">
+                        <div class="difficulty-badge easy active" data-difficulty="easy" onclick="toggleDifficulty(this)">Easy</div>
+                        <div class="difficulty-badge medium active" data-difficulty="medium" onclick="toggleDifficulty(this)">Medium</div>
+                        <div class="difficulty-badge hard active" data-difficulty="hard" onclick="toggleDifficulty(this)">Hard</div>
+                        <div class="difficulty-badge frq active" data-difficulty="frq" onclick="toggleDifficulty(this)">FRQ</div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3><i class="fas fa-question-circle"></i> Question Type</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="checkbox" id="typeMCQ" checked onchange="filterProblems()">
+                            <label for="typeMCQ">Multiple Choice</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="typeFRQ" checked onchange="filterProblems()">
+                            <label for="typeFRQ">Free Response</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="typeConcept" checked onchange="filterProblems()">
+                            <label for="typeConcept">Conceptual</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="typeCalculation" checked onchange="filterProblems()">
+                            <label for="typeCalculation">Calculation</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3><i class="fas fa-sort-amount-down"></i> Sort By</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="radio" id="sortRecent" name="sort" checked onchange="sortProblems('recent')">
+                            <label for="sortRecent">Most Recent</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="radio" id="sortDifficulty" name="sort" onchange="sortProblems('difficulty')">
+                            <label for="sortDifficulty">Difficulty</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="radio" id="sortUnit" name="sort" onchange="sortProblems('unit')">
+                            <label for="sortUnit">Unit</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="radio" id="sortRandom" name="sort" onchange="sortProblems('random')">
+                            <label for="sortRandom">Random</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="resetFilters()" class="btn" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-redo"></i> Reset All Filters
+                </button>
+            </div>
+
+            <!-- Problems Grid -->
+            <div class="problems-grid" id="problemsGrid">
+                <!-- Problems will be loaded here -->
+            </div>
+        </div>
+
+        <!-- External Resources -->
+        <div class="tool-section" style="margin-top: 3rem;">
+            <h2><i class="fas fa-external-link-alt"></i> External Practice Resources</h2>
+            <div class="resources-grid">
+                <a href="https://apcentral.collegeboard.org/courses/ap-physics-2/exam" 
+                   target="_blank" class="resource-card">
+                    <i class="fas fa-university"></i>
+                    <h4>College Board Official</h4>
+                    <p>Official AP Physics 2 exam questions and scoring guidelines</p>
+                </a>
+                <a href="https://www.khanacademy.org/science/ap-physics-2" 
+                   target="_blank" class="resource-card">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h4>Khan Academy</h4>
+                    <p>Free practice exercises and instructional videos</p>
+                </a>
+                <a href="https://www.albert.io/ap-physics-2" 
+                   target="_blank" class="resource-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h4>Albert.io</h4>
+                    <p>Practice questions with detailed explanations</p>
+                </a>
+                <a href="https://www.varsitytutors.com/ap_physics_2-practice-tests" 
+                   target="_blank" class="resource-card">
+                    <i class="fas fa-vial"></i>
+                    <h4>Varsity Tutors</h4>
+                    <p>Diagnostic tests and practice problems</p>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="../script.js"></script>
+    <script>
+        // Practice problems database
+        const practiceProblems = [
+            // Unit 9: Thermodynamics
+            {
+                id: 1,
+                unit: 'unit9',
+                type: 'mcq',
+                difficulty: 'easy',
+                title: 'First Law Application',
+                question: 'A gas expands and does 100 J of work on its surroundings. At the same time, it absorbs 150 J of heat from the surroundings. What is the change in internal energy of the gas?',
+                options: [
+                    'A) 50 J increase',
+                    'B) 50 J decrease',
+                    'C) 250 J increase',
+                    'D) 250 J decrease'
+                ],
+                correctAnswer: 0,
+                explanation: 'Using ΔU = Q - W: ΔU = 150 J - 100 J = 50 J increase',
+                tags: ['thermodynamics', 'first-law', 'calculation'],
+                timeEstimate: 60,
+                source: 'AP Physics 2 Practice'
+            },
+            {
+                id: 2,
+                unit: 'unit9',
+                type: 'mcq',
+                difficulty: 'medium',
+                title: 'PV Diagram Analysis',
+                question: 'A gas undergoes the cyclic process shown in the PV diagram below. During which segment is the net work done by the gas positive?',
+                options: [
+                    'A) A → B',
+                    'B) B → C',
+                    'C) C → A',
+                    'D) All segments'
+                ],
+                correctAnswer: 0,
+                explanation: 'Work done by gas is positive during expansion (increasing volume). In A → B, volume increases at constant pressure, so work is positive.',
+                tags: ['thermodynamics', 'pv-diagram', 'work'],
+                timeEstimate: 90,
+                source: 'College Board FRQ'
+            },
+            {
+                id: 3,
+                unit: 'unit9',
+                type: 'frq',
+                difficulty: 'hard',
+                title: 'Heat Engine Efficiency',
+                question: 'A heat engine operates between a hot reservoir at 500 K and a cold reservoir at 300 K. (a) Calculate the maximum possible efficiency of this engine. (b) If the engine absorbs 1000 J from the hot reservoir during each cycle, what is the maximum work it can perform per cycle? (c) Explain why real engines have lower efficiency than the calculated maximum.',
+                answer: '(a) η_max = 1 - T_c/T_h = 1 - 300/500 = 0.4 or 40%\n(b) W_max = η_max × Q_h = 0.4 × 1000 J = 400 J\n(c) Real engines have irreversible processes, friction, heat losses, and do not operate in ideal Carnot cycles.',
+                tags: ['thermodynamics', 'heat-engine', 'efficiency', 'carnot'],
+                timeEstimate: 180,
+                source: 'AP Physics 2 2023 FRQ'
+            },
+
+            // Unit 10: Electric Force & Field
+            {
+                id: 4,
+                unit: 'unit10',
+                type: 'mcq',
+                difficulty: 'easy',
+                title: 'Coulomb\'s Law',
+                question: 'Two point charges, +Q and +4Q, are separated by a distance d. Where should a third charge be placed so that it experiences no net electrostatic force?',
+                options: [
+                    'A) Between the charges, closer to +Q',
+                    'B) Between the charges, closer to +4Q',
+                    'C) To the left of +Q',
+                    'D) To the right of +4Q'
+                ],
+                correctAnswer: 2,
+                explanation: 'The third charge must be placed to the left of +Q, where the repulsive forces from both charges can balance. Since +4Q is stronger, the third charge must be farther from it.',
+                tags: ['electric-force', 'coulombs-law', 'electrostatics'],
+                timeEstimate: 75,
+                source: 'AP Physics 2 Practice'
+            },
+            {
+                id: 5,
+                unit: 'unit10',
+                type: 'concept',
+                difficulty: 'medium',
+                title: 'Electric Field Lines',
+                question: 'Which of the following statements about electric field lines is NOT true?',
+                options: [
+                    'A) Field lines never cross each other',
+                    'B) Field lines point away from positive charges',
+                    'C) The density of field lines is proportional to field strength',
+                    'D) Field lines always form closed loops'
+                ],
+                correctAnswer: 3,
+                explanation: 'Electric field lines do not always form closed loops; they begin on positive charges and end on negative charges. Magnetic field lines form closed loops.',
+                tags: ['electric-field', 'field-lines', 'conceptual'],
+                timeEstimate: 45,
+                source: 'Concept Review'
+            },
+
+            // Unit 11: Circuits
+            {
+                id: 6,
+                unit: 'unit11',
+                type: 'calculation',
+                difficulty: 'medium',
+                title: 'Series Circuit Analysis',
+                question: 'Three resistors with resistances 2 Ω, 4 Ω, and 6 Ω are connected in series to a 12 V battery. What is the current through the 4 Ω resistor?',
+                options: [
+                    'A) 0.5 A',
+                    'B) 1.0 A',
+                    'C) 1.5 A',
+                    'D) 2.0 A'
+                ],
+                correctAnswer: 1,
+                explanation: 'Total resistance = 2 + 4 + 6 = 12 Ω. Current = V/R = 12V/12Ω = 1.0 A. In series, current is same through all components.',
+                tags: ['circuits', 'series', 'ohms-law'],
+                timeEstimate: 60,
+                source: 'Circuit Practice'
+            },
+            {
+                id: 7,
+                unit: 'unit11',
+                type: 'frq',
+                difficulty: 'hard',
+                title: 'RC Circuit Analysis',
+                question: 'A 10 μF capacitor is connected in series with a 100 kΩ resistor and a 12 V battery. (a) Calculate the time constant of the circuit. (b) What is the maximum charge on the capacitor? (c) How long does it take for the capacitor to reach 63% of its maximum charge?',
+                answer: '(a) τ = RC = (100 × 10³ Ω) × (10 × 10⁻⁶ F) = 1.0 s\n(b) Q_max = CV = (10 × 10⁻⁶ F) × 12 V = 120 μC\n(c) At t = τ, charge = 0.63 × Q_max, so t = 1.0 s',
+                tags: ['circuits', 'capacitors', 'rc-circuit', 'time-constant'],
+                timeEstimate: 120,
+                source: 'AP Physics 2 2022 FRQ'
+            },
+
+            // Unit 12: Magnetism
+            {
+                id: 8,
+                unit: 'unit12',
+                type: 'mcq',
+                difficulty: 'medium',
+                title: 'Magnetic Force on Wire',
+                question: 'A straight wire carrying current I is placed perpendicular to a uniform magnetic field B. If the current is doubled and the magnetic field is halved, what happens to the magnetic force on the wire?',
+                options: [
+                    'A) It is halved',
+                    'B) It remains the same',
+                    'C) It is doubled',
+                    'D) It is quadrupled'
+                ],
+                correctAnswer: 1,
+                explanation: 'F = ILB sinθ. With I\' = 2I and B\' = B/2, F\' = (2I)L(B/2) sin90° = ILB = F. So force remains the same.',
+                tags: ['magnetism', 'magnetic-force', 'current-carrying-wire'],
+                timeEstimate: 60,
+                source: 'Magnetism Practice'
+            },
+            {
+                id: 9,
+                unit: 'unit12',
+                type: 'concept',
+                difficulty: 'hard',
+                title: 'Faraday\'s Law Application',
+                question: 'A square loop of wire is moved at constant velocity into, through, and out of a uniform magnetic field perpendicular to the page. During which part(s) of the motion is there an induced current in the loop?',
+                options: [
+                    'A) Only while entering the field',
+                    'B) Only while leaving the field',
+                    'C) Both while entering and leaving',
+                    'D) While completely inside the field'
+                ],
+                correctAnswer: 2,
+                explanation: 'Induced current occurs when magnetic flux through loop changes. Flux changes while entering (increasing) and leaving (decreasing), but not while completely inside (constant flux).',
+                tags: ['magnetism', 'faradays-law', 'induced-current'],
+                timeEstimate: 75,
+                source: 'Electromagnetism Review'
+            },
+
+            // Unit 13: Optics
+            {
+                id: 10,
+                unit: 'unit13',
+                type: 'calculation',
+                difficulty: 'medium',
+                title: 'Lens Equation',
+                question: 'An object is placed 30 cm in front of a converging lens with focal length 20 cm. Where is the image formed?',
+                options: [
+                    'A) 12 cm in front of lens',
+                    'B) 12 cm behind lens',
+                    'C) 60 cm in front of lens',
+                    'D) 60 cm behind lens'
+                ],
+                correctAnswer: 3,
+                explanation: 'Using 1/f = 1/d_o + 1/d_i: 1/20 = 1/30 + 1/d_i → 1/d_i = 1/20 - 1/30 = 1/60 → d_i = 60 cm (positive means real image behind lens).',
+                tags: ['optics', 'lens-equation', 'converging-lens'],
+                timeEstimate: 75,
+                source: 'Optics Practice'
+            },
+            {
+                id: 11,
+                unit: 'unit13',
+                type: 'mcq',
+                difficulty: 'easy',
+                title: 'Total Internal Reflection',
+                question: 'Total internal reflection can occur when light travels from:',
+                options: [
+                    'A) Air to water',
+                    'B) Water to air',
+                    'C) Glass to water',
+                    'D) Water to glass'
+                ],
+                correctAnswer: 1,
+                explanation: 'Total internal reflection occurs when light travels from higher refractive index to lower refractive index (water to air) and angle of incidence exceeds critical angle.',
+                tags: ['optics', 'refraction', 'total-internal-reflection'],
+                timeEstimate: 45,
+                source: 'Concept Review'
+            },
+
+            // Unit 14: Waves
+            {
+                id: 12,
+                unit: 'unit14',
+                type: 'mcq',
+                difficulty: 'medium',
+                title: 'Wave Interference',
+                question: 'Two coherent sources emit waves in phase with wavelength λ. At a point that is 3λ from one source and 4.5λ from the other, what type of interference occurs?',
+                options: [
+                    'A) Constructive interference',
+                    'B) Destructive interference',
+                    'C) Neither constructive nor destructive',
+                    'D) Cannot be determined'
+                ],
+                correctAnswer: 1,
+                explanation: 'Path difference = 4.5λ - 3λ = 1.5λ = 3(λ/2). Odd multiple of λ/2 gives destructive interference.',
+                tags: ['waves', 'interference', 'coherence'],
+                timeEstimate: 60,
+                source: 'Wave Practice'
+            },
+            {
+                id: 13,
+                unit: 'unit14',
+                type: 'frq',
+                difficulty: 'hard',
+                title: 'Standing Waves on String',
+                question: 'A string of length 2.0 m is fixed at both ends. The fundamental frequency is 50 Hz. (a) What is the speed of waves on the string? (b) What is the frequency of the third harmonic? (c) How many nodes are present in the fourth harmonic?',
+                answer: '(a) For fundamental, λ = 2L = 4.0 m. v = fλ = 50 Hz × 4.0 m = 200 m/s\n(b) Third harmonic: f₃ = 3f₁ = 150 Hz\n(c) Fourth harmonic has 5 nodes (including ends).',
+                tags: ['waves', 'standing-waves', 'harmonics'],
+                timeEstimate: 120,
+                source: 'AP Physics 2 2021 FRQ'
+            },
+
+            // Unit 15: Modern Physics
+            {
+                id: 14,
+                unit: 'unit15',
+                type: 'calculation',
+                difficulty: 'medium',
+                title: 'Photoelectric Effect',
+                question: 'Light with wavelength 300 nm strikes a metal with work function 2.0 eV. What is the maximum kinetic energy of emitted electrons?',
+                options: [
+                    'A) 1.14 eV',
+                    'B) 2.14 eV',
+                    'C) 3.14 eV',
+                    'D) 4.14 eV'
+                ],
+                correctAnswer: 1,
+                explanation: 'Energy of photon: E = hc/λ = (1240 eV·nm)/(300 nm) = 4.14 eV. K_max = E - φ = 4.14 eV - 2.0 eV = 2.14 eV.',
+                tags: ['modern-physics', 'photoelectric-effect', 'quantum'],
+                timeEstimate: 90,
+                source: 'Modern Physics Practice'
+            },
+            {
+                id: 15,
+                unit: 'unit15',
+                type: 'concept',
+                difficulty: 'hard',
+                title: 'Nuclear Decay',
+                question: 'A radioactive sample has a half-life of 10 days. What fraction of the original sample remains after 30 days?',
+                options: [
+                    'A) 1/2',
+                    'B) 1/4',
+                    'C) 1/8',
+                    'D) 1/16'
+                ],
+                correctAnswer: 2,
+                explanation: '30 days = 3 half-lives. After n half-lives, fraction = (1/2)^n = (1/2)^3 = 1/8.',
+                tags: ['modern-physics', 'radioactivity', 'half-life'],
+                timeEstimate: 60,
+                source: 'Nuclear Physics Review'
+            }
+        ];
+
+        // User progress tracking
+        let userProgress = JSON.parse(localStorage.getItem('practiceProgress') || '{}');
+        let currentFilters = {
+            units: ['unit9', 'unit10', 'unit11', 'unit12', 'unit13', 'unit14', 'unit15'],
+            difficulties: ['easy', 'medium', 'hard', 'frq'],
+            types: ['mcq', 'frq', 'concept', 'calculation'],
+            search: '',
+            sort: 'recent'
+        };
+
+        // Timer variables
+        let examTimer;
+        let examTimeLeft = 90 * 60; // 90 minutes in seconds
+        let examRunning = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgressStats();
+            renderProblems();
+            setupEventListeners();
+        });
+
+        // Render problems based on filters
+        function renderProblems() {
+            const grid = document.getElementById('problemsGrid');
+            
+            // Filter problems
+            let filtered = practiceProblems.filter(problem => {
+                // Unit filter
+                if (!currentFilters.units.includes(problem.unit)) return false;
+                
+                // Difficulty filter
+                if (!currentFilters.difficulties.includes(problem.difficulty)) return false;
+                
+                // Type filter
+                if (!currentFilters.types.includes(problem.type)) return false;
+                
+                // Search filter
+                if (currentFilters.search) {
+                    const searchTerm = currentFilters.search.toLowerCase();
+                    const searchable = [
+                        problem.title,
+                        problem.question,
+                        problem.tags.join(' '),
+                        problem.source
+                    ].join(' ').toLowerCase();
+                    
+                    if (!searchable.includes(searchTerm)) return false;
+                }
+                
+                return true;
+            });
+            
+            // Sort problems
+            switch(currentFilters.sort) {
+                case 'difficulty':
+                    const difficultyOrder = { 'easy': 1, 'medium': 2, 'hard': 3, 'frq': 4 };
+                    filtered.sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
+                    break;
+                case 'unit':
+                    filtered.sort((a, b) => a.unit.localeCompare(b.unit));
+                    break;
+                case 'random':
+                    filtered.sort(() => Math.random() - 0.5);
+                    break;
+                case 'recent':
+                default:
+                    // Already sorted by ID (which acts as creation order)
+                    break;
+            }
+            
+            // Display problems or empty state
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No problems found</h3>
+                        <p>Try adjusting your filters or search term</p>
+                        <button onclick="resetFilters()" class="btn" style="margin-top: 1rem;">
+                            <i class="fas fa-redo"></i> Reset Filters
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render problems
+            grid.innerHTML = filtered.map(problem => {
+                const userAnswer = userProgress[problem.id]?.userAnswer;
+                const isCorrect = userProgress[problem.id]?.isCorrect;
+                const timeSpent = userProgress[problem.id]?.timeSpent || 0;
+                const attempts = userProgress[problem.id]?.attempts || 0;
+                
+                let statusClass = '';
+                let statusText = '';
+                if (userAnswer !== undefined) {
+                    statusClass = isCorrect ? 'correct' : 'incorrect';
+                    statusText = isCorrect ? '✓ Correct' : '✗ Incorrect';
+                }
+                
+                return `
+                    <div class="problem-card ${statusClass}" data-id="${problem.id}">
+                        <div class="problem-header">
+                            <div class="problem-title">
+                                <span class="problem-number">P${problem.id}</span>
+                                <h3>${problem.title}</h3>
+                            </div>
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <span class="difficulty-badge ${problem.difficulty}">
+                                    ${problem.difficulty.toUpperCase()}
+                                </span>
+                                ${statusText ? `<span class="status-badge ${statusClass}">${statusText}</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="problem-tags">
+                            <span class="problem-tag">${getUnitName(problem.unit)}</span>
+                            <span class="problem-tag">${getTypeName(problem.type)}</span>
+                            ${problem.tags.map(tag => `<span class="problem-tag">${tag}</span>`).join('')}
+                            <span class="problem-tag"><i class="far fa-clock"></i> ${problem.timeEstimate}s</span>
+                        </div>
+                        
+                        <div class="problem-content">
+                            <p>${problem.question}</p>
+                            
+                            ${problem.type === 'mcq' ? `
+                                <div class="mcq-options" id="options-${problem.id}">
+                                    ${problem.options.map((option, index) => `
+                                        <div class="mcq-option ${userAnswer === index ? 'selected' : ''} 
+                                                    ${userAnswer !== undefined && index === problem.correctAnswer ? 'correct' : ''}
+                                                    ${userAnswer !== undefined && userAnswer !== problem.correctAnswer && userAnswer === index ? 'incorrect' : ''}"
+                                             onclick="selectAnswer(${problem.id}, ${index})">
+                                            <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                                            <span>${option.substring(3)}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="solution-panel ${userAnswer !== undefined ? 'show' : ''}" id="solution-${problem.id}">
+                                <div class="solution-header">
+                                    <h4><i class="fas fa-lightbulb"></i> Solution</h4>
+                                    <small>${attempts > 0 ? `Attempted ${attempts} time(s), spent ${timeSpent}s` : 'Not attempted yet'}</small>
+                                </div>
+                                <p>${problem.type === 'mcq' ? `Correct answer: ${problem.options[problem.correctAnswer]}` : problem.answer}</p>
+                                <p><strong>Explanation:</strong> ${problem.explanation}</p>
+                                <p><em>Source: ${problem.source}</em></p>
+                            </div>
+                        </div>
+                        
+                        <div class="problem-actions">
+                            ${userAnswer === undefined ? `
+                                <button onclick="showSolution(${problem.id})" class="btn">
+                                    <i class="fas fa-eye"></i> Show Solution
+                                </button>
+                                <button onclick="markAsComplete(${problem.id})" class="btn btn-success">
+                                    <i class="fas fa-check"></i> Mark as Complete
+                                </button>
+                            ` : `
+                                <button onclick="resetProblem(${problem.id})" class="btn">
+                                    <i class="fas fa-redo"></i> Try Again
+                                </button>
+                                ${problem.type === 'mcq' ? `
+                                    <button onclick="showAnswer(${problem.id})" class="btn">
+                                        <i class="fas fa-bullseye"></i> Show Correct Answer
+                                    </button>
+                                ` : ''}
+                            `}
+                            <button onclick="startTimerForProblem(${problem.id})" class="btn">
+                                <i class="fas fa-stopwatch"></i> Time Me
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add CSS for status badges
+            const style = document.createElement('style');
+            style.textContent = `
+                .status-badge {
+                    padding: 0.25rem 0.75rem;
+                    border-radius: 20px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                }
+                .status-badge.correct {
+                    background: #d4edda;
+                    color: #155724;
+                }
+                .status-badge.incorrect {
+                    background: #f8d7da;
+                    color: #721c24;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Filter functions
+        function filterProblems() {
+            // Update current filters
+            currentFilters.units = [];
+            ['unit9', 'unit10', 'unit11', 'unit12', 'unit13', 'unit14', 'unit15'].forEach(unit => {
+                if (document.getElementById(unit)?.checked) {
+                    currentFilters.units.push(unit);
+                }
+            });
+            
+            currentFilters.types = [];
+            ['typeMCQ', 'typeFRQ', 'typeConcept', 'typeCalculation'].forEach(type => {
+                if (document.getElementById(type)?.checked) {
+                    currentFilters.types.push(type.replace('type', '').toLowerCase());
+                }
+            });
+            
+            currentFilters.search = document.getElementById('problemSearch').value.toLowerCase();
+            
+            // Update difficulty filters
+            currentFilters.difficulties = Array.from(document.querySelectorAll('.difficulty-badge.active'))
+                .map(badge => badge.dataset.difficulty);
+            
+            renderProblems();
+        }
+
+        function toggleDifficulty(element) {
+            element.classList.toggle('active');
+            filterProblems();
+        }
+
+        function sortProblems(sortType) {
+            currentFilters.sort = sortType;
+            renderProblems();
+        }
+
+        function resetFilters() {
+            // Reset checkboxes
+            ['unit9', 'unit10', 'unit11', 'unit12', 'unit13', 'unit14', 'unit15',
+             'typeMCQ', 'typeFRQ', 'typeConcept', 'typeCalculation'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.checked = true;
+            });
+            
+            // Reset difficulty badges
+            document.querySelectorAll('.difficulty-badge').forEach(badge => {
+                badge.classList.add('active');
+            });
+            
+            // Reset search
+            document.getElementById('problemSearch').value = '';
+            
+            // Reset sort
+            document.getElementById('sortRecent').checked = true;
+            
+            // Reset current filters
+            currentFilters = {
+                units: ['unit9', 'unit10', 'unit11', 'unit12', 'unit13', 'unit14', 'unit15'],
+                difficulties: ['easy', 'medium', 'hard', 'frq'],
+                types: ['mcq', 'frq', 'concept', 'calculation'],
+                search: '',
+                sort: 'recent'
+            };
+            
+            renderProblems();
+        }
+
+        // Problem interaction functions
+        function selectAnswer(problemId, optionIndex) {
+            const problem = practiceProblems.find(p => p.id === problemId);
+            if (!problem) return;
+            
+            // Record attempt
+            if (!userProgress[problemId]) {
+                userProgress[problemId] = {
+                    attempts: 0,
+                    timeSpent: 0,
+                    lastAttempt: Date.now()
+                };
+            }
+            
+            userProgress[problemId].userAnswer = optionIndex;
+            userProgress[problemId].isCorrect = (optionIndex === problem.correctAnswer);
+            userProgress[problemId].attempts = (userProgress[problemId].attempts || 0) + 1;
+            
+            // Save progress
+            localStorage.setItem('practiceProgress', JSON.stringify(userProgress));
+            
+            // Update display
+            renderProblems();
+            loadProgressStats();
+        }
+
+        function showSolution(problemId) {
+            const solutionPanel = document.getElementById(`solution-${problemId}`);
+            if (solutionPanel) {
+                solutionPanel.classList.add('show');
+            }
+        }
+
+        function markAsComplete(problemId) {
+            if (!userProgress[problemId]) {
+                userProgress[problemId] = {
+                    attempts: 1,
+                    timeSpent: 0,
+                    lastAttempt: Date.now(),
+                    userAnswer: -1,
+                    isCorrect: true // Marking as complete assumes they understand it
+                };
+                
+                localStorage.setItem('practiceProgress', JSON.stringify(userProgress));
+                renderProblems();
+                loadProgressStats();
+            }
+        }
+
+        function resetProblem(problemId) {
+            if (userProgress[problemId]) {
+                delete userProgress[problemId];
+                localStorage.setItem('practiceProgress', JSON.stringify(userProgress));
+                renderProblems();
+                loadProgressStats();
+            }
+        }
+
+        function showAnswer(problemId) {
+            const problem = practiceProblems.find(p => p.id === problemId);
+            if (!problem) return;
+            
+            alert(`Correct answer: ${problem.type === 'mcq' ? problem.options[problem.correctAnswer] : problem.answer}`);
+        }
+
+        // Timer functions
+        function startTimerForProblem(problemId) {
+            const problem = practiceProblems.find(p => p.id === problemId);
+            if (!problem) return;
+            
+            let timeLeft = problem.timeEstimate;
+            const timerDisplay = document.createElement('div');
+            timerDisplay.className = 'timer-display';
+            timerDisplay.style.fontSize = '1.5rem';
+            timerDisplay.style.margin = '1rem 0';
+            timerDisplay.textContent = `${timeLeft}s`;
+            
+            const problemCard = document.querySelector(`[data-id="${problemId}"]`);
+            if (problemCard) {
+                problemCard.querySelector('.problem-content').appendChild(timerDisplay);
+                
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = `${timeLeft}s`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        timerDisplay.textContent = 'Time\'s up!';
+                        timerDisplay.style.color = '#e74c3c';
+                        
+                        // Auto-show solution
+                        showSolution(problemId);
+                    }
+                }, 1000);
+                
+                // Store timer reference
+                problemCard.dataset.timerId = timer;
+            }
+        }
+
+        function startExamTimer() {
+            examRunning = true;
+            document.getElementById('startTimerBtn').style.display = 'none';
+            document.getElementById('pauseTimerBtn').style.display = 'inline-block';
+            
+            examTimer = setInterval(() => {
+                examTimeLeft--;
+                updateExamTimerDisplay();
+                
+                if (examTimeLeft <= 0) {
+                    clearInterval(examTimer);
+                    examRunning = false;
+                    alert('Exam time is up!');
+                    document.getElementById('startTimerBtn').style.display = 'inline-block';
+                    document.getElementById('pauseTimerBtn').style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        function pauseExamTimer() {
+            examRunning = false;
+            clearInterval(examTimer);
+            document.getElementById('startTimerBtn').style.display = 'inline-block';
+            document.getElementById('pauseTimerBtn').style.display = 'none';
+        }
+
+        function resetExamTimer() {
+            clearInterval(examTimer);
+            examRunning = false;
+            const duration = parseInt(document.getElementById('examDuration').value) || 90;
+            examTimeLeft = duration * 60;
+            updateExamTimerDisplay();
+            document.getElementById('startTimerBtn').style.display = 'inline-block';
+            document.getElementById('pauseTimerBtn').style.display = 'none';
+        }
+
+        function changeExamDuration() {
+            const duration = parseInt(document.getElementById('examDuration').value) || 90;
+            examTimeLeft = duration * 60;
+            updateExamTimerDisplay();
+            
+            if (examRunning) {
+                clearInterval(examTimer);
+                startExamTimer();
+            }
+        }
+
+        function updateExamTimerDisplay() {
+            const minutes = Math.floor(examTimeLeft / 60);
+            const seconds = examTimeLeft % 60;
+            document.getElementById('examTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Progress tracking
+        function loadProgressStats() {
+            const totalAttempted = Object.keys(userProgress).length;
+            const totalCorrect = Object.values(userProgress).filter(p => p.isCorrect).length;
+            const totalTime = Object.values(userProgress).reduce((sum, p) => sum + (p.timeSpent || 0), 0);
+            
+            document.getElementById('totalAttempted').textContent = totalAttempted;
+            document.getElementById('correctRate').textContent = totalAttempted > 0 ? 
+                `${Math.round((totalCorrect / totalAttempted) * 100)}%` : '0%';
+            document.getElementById('avgTime').textContent = totalAttempted > 0 ? 
+                `${Math.round(totalTime / totalAttempted)}s` : '0s';
+            
+            // Calculate streak (consecutive correct days)
+            const today = new Date().toDateString();
+            const last7Days = Array.from({length: 7}, (_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                return date.toDateString();
+            });
+            
+            let streak = 0;
+            for (const day of last7Days) {
+                const hasPractice = Object.values(userProgress).some(p => {
+                    const practiceDate = new Date(p.lastAttempt).toDateString();
+                    return practiceDate === day;
+                });
+                if (hasPractice) streak++;
+                else break;
+            }
+            
+            document.getElementById('streak').textContent = streak;
+        }
+
+        // Helper functions
+        function getUnitName(unitKey) {
+            const units = {
+                'unit9': 'Thermodynamics',
+                'unit10': 'Electric Force',
+                'unit11': 'Circuits',
+                'unit12': 'Magnetism',
+                'unit13': 'Optics',
+                'unit14': 'Waves',
+                'unit15': 'Modern Physics'
+            };
+            return units[unitKey] || unitKey;
+        }
+
+        function getTypeName(typeKey) {
+            const types = {
+                'mcq': 'Multiple Choice',
+                'frq': 'Free Response',
+                'concept': 'Conceptual',
+                'calculation': 'Calculation'
+            };
+            return types[typeKey] || typeKey;
+        }
+
+        // Event listeners setup
+        function setupEventListeners() {
+            // Prevent timer from continuing when leaving page
+            window.addEventListener('beforeunload', function() {
+                if (examRunning) {
+                    clearInterval(examTimer);
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Space to start/pause timer
+                if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    if (examRunning) {
+                        pauseExamTimer();
+                    } else {
+                        startExamTimer();
+                    }
+                }
+                
+                // R to reset timer
+                if (e.code === 'KeyR' && e.ctrlKey) {
+                    e.preventDefault();
+                    resetExamTimer();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
