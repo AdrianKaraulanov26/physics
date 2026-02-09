@@ -1,0 +1,302 @@
+// Main Navigation and Site Functionality
+
+// Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+    }
+    
+    // Initialize all tooltips
+    initializeTooltips();
+    
+    // Load any saved progress
+    loadProgress();
+});
+
+// Tooltip System
+function initializeTooltips() {
+    const tooltips = document.querySelectorAll('[data-tooltip]');
+    tooltips.forEach(element => {
+        element.addEventListener('mouseenter', showTooltip);
+        element.addEventListener('mouseleave', hideTooltip);
+    });
+}
+
+function showTooltip(e) {
+    const tooltipText = this.getAttribute('data-tooltip');
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    tooltip.textContent = tooltipText;
+    tooltip.style.position = 'absolute';
+    tooltip.style.background = 'var(--dark)';
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '5px 10px';
+    tooltip.style.borderRadius = '4px';
+    tooltip.style.fontSize = '0.8rem';
+    tooltip.style.zIndex = '10000';
+    
+    document.body.appendChild(tooltip);
+    
+    const rect = this.getBoundingClientRect();
+    tooltip.style.top = (rect.top - tooltip.offsetHeight - 5) + 'px';
+    tooltip.style.left = (rect.left + rect.width / 2 - tooltip.offsetWidth / 2) + 'px';
+    
+    this.tooltipElement = tooltip;
+}
+
+function hideTooltip() {
+    if (this.tooltipElement) {
+        this.tooltipElement.remove();
+        this.tooltipElement = null;
+    }
+}
+
+// Progress Tracking System
+function saveProgress(unitId, progress) {
+    const progressData = JSON.parse(localStorage.getItem('apPhysicsProgress') || '{}');
+    progressData[unitId] = progress;
+    localStorage.setItem('apPhysicsProgress', JSON.stringify(progressData));
+    updateProgressDisplay();
+}
+
+function loadProgress() {
+    const progressData = JSON.parse(localStorage.getItem('apPhysicsProgress') || '{}');
+    return progressData;
+}
+
+function updateProgressDisplay() {
+    const progressData = loadProgress();
+    const progressBars = document.querySelectorAll('.progress-bar');
+    
+    progressBars.forEach(bar => {
+        const unitId = bar.closest('.unit-card')?.querySelector('h3')?.textContent || '';
+        const progress = progressData[unitId] || 0;
+        bar.style.width = progress + '%';
+        
+        const span = bar.nextElementSibling;
+        if (span && span.tagName === 'SPAN') {
+            span.textContent = progress + '% Studied';
+        }
+    });
+}
+
+// PDF Integration Helper
+// In script.js, update the PDF functions:
+function loadPDF(pdfName, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Try different PDF file extensions
+    const pdfExtensions = ['.pdf', '_notes.pdf', '_textbook.pdf', ''];
+    const pdfPathBase = `pdfs/${pdfName}`;
+    
+    // Create PDF viewer
+    container.innerHTML = `
+        <div class="pdf-viewer">
+            <div class="pdf-header">
+                <h4>${pdfName}</h4>
+                <div class="pdf-search">
+                    <input type="text" id="pdf-search-input" placeholder="Search in PDF...">
+                    <button onclick="searchInPDF()"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="pdf-content">
+                <p><i class="fas fa-file-pdf"></i> PDF File: ${pdfName}.pdf</p>
+                <p>To view the PDF, click "Open Full Screen" or place your PDF file in the /pdfs/ folder.</p>
+                
+                ${pdfExtensions.map(ext => `
+                    <div class="pdf-option">
+                        <button onclick="tryOpenPDF('${pdfPathBase}${ext}')" class="btn-small">
+                            Try: ${pdfName}${ext}
+                        </button>
+                    </div>
+                `).join('')}
+                
+                <div class="pdf-tips">
+                    <h5>PDF Setup Tips:</h5>
+                    <ol>
+                        <li>Make sure your PDF is in the <code>pdfs/</code> folder</li>
+                        <li>Name it exactly: <code>${pdfName}.pdf</code></li>
+                        <li>Or use one of the alternative names above</li>
+                        <li>Refresh the page after adding PDFs</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add some styles for the PDF viewer
+    const style = document.createElement('style');
+    style.textContent = `
+        .pdf-viewer {
+            padding: 1rem;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid var(--light-gray);
+        }
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .pdf-search {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .pdf-search input {
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+        }
+        .pdf-content {
+            line-height: 1.6;
+        }
+        .pdf-option {
+            margin: 0.5rem 0;
+        }
+        .pdf-tips {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .pdf-tips ol {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .pdf-tips code {
+            background: #e9ecef;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function openPDF(pdfName) {
+    // Try multiple possible file names
+    const possibleFiles = [
+        `pdfs/${pdfName}.pdf`,
+        `pdfs/${pdfName.toLowerCase().replace(/\s+/g, '-')}.pdf`,
+        `pdfs/${pdfName.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+        `pdfs/${pdfName.replace(/\s+/g, '')}.pdf`
+    ];
+    
+    let foundFile = null;
+    for (const file of possibleFiles) {
+        // Check if file might exist (this is a client-side check, so limited)
+        console.log('Trying to open:', file);
+        foundFile = file;
+        break; // Just try the first one
+    }
+    
+    if (foundFile) {
+        window.open(foundFile, '_blank');
+    } else {
+        alert(`PDF file not found. Please make sure "${pdfName}.pdf" is in the /pdfs/ folder.`);
+    }
+}
+
+function tryOpenPDF(pdfPath) {
+    window.open(pdfPath, '_blank');
+}
+
+function searchInPDF() {
+    const searchTerm = document.getElementById('pdf-search-input').value;
+    if (searchTerm) {
+        alert(`Searching for "${searchTerm}" in PDF...\n\nNote: For full PDF search functionality, consider using a PDF.js integration or open the PDF in a separate tab and use Ctrl+F.`);
+    }
+}
+
+// Notes System (for unit pages)
+function initializeNotes(unitKey) {
+    const notesArea = document.getElementById('unit-notes');
+    if (!notesArea) return;
+    
+    // Load saved notes
+    const savedNotes = localStorage.getItem(`notes_${unitKey}`);
+    if (savedNotes) {
+        notesArea.innerHTML = savedNotes;
+    }
+    
+    // Auto-save on input
+    notesArea.addEventListener('input', function() {
+        localStorage.setItem(`notes_${unitKey}`, this.innerHTML);
+    });
+    
+    // Add formatting buttons
+    addFormattingTools(notesArea, unitKey);
+}
+
+function addFormattingTools(notesArea, unitKey) {
+    const toolbar = document.createElement('div');
+    toolbar.className = 'notes-toolbar';
+    toolbar.innerHTML = `
+        <button onclick="formatText('bold', '${unitKey}')"><i class="fas fa-bold"></i></button>
+        <button onclick="formatText('italic', '${unitKey}')"><i class="fas fa-italic"></i></button>
+        <button onclick="formatText('underline', '${unitKey}')"><i class="fas fa-underline"></i></button>
+        <button onclick="addHighlight('${unitKey}')"><i class="fas fa-highlighter"></i></button>
+        <button onclick="addEquation('${unitKey}')"><i class="fas fa-square-root-alt"></i></button>
+        <button onclick="clearNotes('${unitKey}')"><i class="fas fa-trash"></i></button>
+    `;
+    
+    notesArea.parentNode.insertBefore(toolbar, notesArea);
+}
+
+function formatText(command, unitKey) {
+    document.execCommand(command);
+    saveCurrentNotes(unitKey);
+}
+
+function addHighlight(unitKey) {
+    document.execCommand('hiliteColor', false, '#ffff00');
+    saveCurrentNotes(unitKey);
+}
+
+function addEquation(unitKey) {
+    const equation = prompt('Enter equation (LaTeX format supported):', 'E = mc^2');
+    if (equation) {
+        const notesArea = document.getElementById('unit-notes');
+        const equationHTML = `<span class="equation">${equation}</span>`;
+        document.execCommand('insertHTML', false, equationHTML);
+        saveCurrentNotes(unitKey);
+    }
+}
+
+function saveCurrentNotes(unitKey) {
+    const notesArea = document.getElementById('unit-notes');
+    if (notesArea) {
+        localStorage.setItem(`notes_${unitKey}`, notesArea.innerHTML);
+    }
+}
+
+function clearNotes(unitKey) {
+    if (confirm('Clear all notes for this unit?')) {
+        const notesArea = document.getElementById('unit-notes');
+        if (notesArea) {
+            notesArea.innerHTML = '';
+            localStorage.removeItem(`notes_${unitKey}`);
+        }
+    }
+}
+
+// Export notes function
+function exportNotes(unitKey) {
+    const notes = localStorage.getItem(`notes_${unitKey}`) || '';
+    const blob = new Blob([notes], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ap-physics-${unitKey}-notes.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
