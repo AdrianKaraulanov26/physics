@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Physics 2 Study Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-atom"></i>
+            <span>AP Physics 2 Hub</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+            <li class="dropdown">
+                <a href="#"><i class="fas fa-book"></i> Units <i class="fas fa-chevron-down"></i></a>
+                <div class="dropdown-content">
+                
+                    <a href="units/unit.html?unit=unit10">Unit 9: Thermodynamics</a>
+                    <a href="units/unit.html?unit=unit10">Unit 10: Electric Force & Field</a>
+                    <a href="units/unit.html?unit=unit11">Unit 11: Electric Circuits</a>
+                    <a href="units/unit.html?unit=unit12">Unit 12: Magnetism</a>
+                    <a href="units/unit.html?unit=unit13">Unit 13: Geometric Optics</a>
+                    <a href="units/unit.html?unit=unit14">Unit 14: Waves & Optics</a>
+                    <a href="units/unit.html?unit=unit15">Unit 15: Modern Physics</a>
+                </div>
+            </li>
+            <li><a href="flashcards.html"><i class="fas fa-layer-group"></i> Flashcards</a></li>
+            <li><a href="tools/whiteboard.html"><i class="fas fa-draw-polygon"></i> Diagrams</a></li>
+            <li><a href="tools/practice.html"><i class="fas fa-clipboard-list"></i> Practice</a></li>
+            <li class="dropdown">
+                <a href="#"><i class="fas fa-tools"></i> Tools <i class="fas fa-chevron-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="tools/calculator.html">Calculator</a>
+                    <a href="tools/timer.html">Study Timer</a>
+                    <a href="tools/whiteboard.html">Whiteboard</a>
+                </div>
+            </li>
+        </ul>
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <header class="hero">
+            <h1>AP Physics 2 Study Hub</h1>
+            <p class="subtitle">Master algebra-based physics with interactive notes, tools, and organized resources</p>
+        </header>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-file-pdf"></i>
+                <h3>10 PDFs</h3>
+                <p>Complete textbook coverage</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-play-circle"></i>
+                <h3>50+ Videos</h3>
+                <p>Embedded tutorials</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-sticky-note"></i>
+                <h3>Smart Notes</h3>
+                <p>Save & highlight per unit</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calculator"></i>
+                <h3>Tools</h3>
+                <p>Calculator, timer, whiteboard</p>
+            </div>
+        </div>
+
+        <!-- Unit Cards Grid -->
+        <section class="section">
+            <h2><i class="fas fa-layer-group"></i> Study Units</h2>
+            <p class="section-description">Click on any unit to access notes, videos, and practice problems</p>
+            
+            <div class="units-grid">
+                <!-- Unit 9 -->
+                <div class="unit-card">
+                    <div class="unit-icon" style="background-color: #e74c3c;">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3>Unit 9: Thermodynamics</h3>
+                    <p>First/Second Law, heat engines, PV diagrams, entropy</p>
+                    <a href="units/unit9.html" class="btn">Study Now</a>
+                    <div class="unit-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>0% Studied</span>
+                    </div>
+                </div>
+
+                <!-- Unit 10 -->
+                <div class="unit-card">
+                    <div class="unit-icon" style="background-color: #3498db;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Unit 10: Electric Force & Field</h3>
+                    <p>Coulomb's law, field lines, electric potential</p>
+                    <a href="units/unit10.html" class="btn">Study Now</a>
+                    <div class="unit-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>0% Studied</span>
+                    </div>
+                </div>
+
+                <!-- Unit 11 -->
+                <div class="unit-card">
+                    <div class="unit-icon" style="background-color: #2ecc71;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Unit 11: Electric Circuits</h3>
+                    <p>Ohm's law, series/parallel circuits, capacitors</p>
+                    <a href="units/unit11.html" class="btn">Study Now</a>
+                    <div class="unit-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>0% Studied</span>
+                    </div>
+                </div>
+
+                <!-- Unit 12 -->
+                <div class="unit-card">
+                    <div class="unit-icon" style="background-color: #9b59b6;">
+                        <i class="fas fa-magnet"></i>
+                    </div>
+                    <h3>Unit 12: Magnetism</h3>
+                    <p>Magnetic fields, Faraday's/Lenz's law, inductors</p>
+                    <a href="units/unit12.html" class="btn">Study Now</a>
+                    <div class="unit-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>0% Studied</span>
+                    </div>
+                </div>
+
+                <!-- Unit 13 -->
+                <div class="unit-card">
+                    <div class="unit-icon" style="background-color: #1abc9c;">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Unit 13: Geometric Optics</h3>
+                    <p>Reflection, refraction, lenses, mirrors, optics equations</p>
+                    <a href="units/unit13.html" class="btn">Study Now</a>
+                    <div class="unit-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>0% Studied</span>
+                    </div>
+                </div>
+
+                <!-- Unit 14 -->
+                <div class="unit-card">
+                    <div class="unit-icon" style="background-color: #f39c12;">
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                    <h3>Unit 14: Waves & Optics</h3>
+                    <p>Wave basics, sound properties, interference, diffraction</p>
+                    <a href="units/unit14.html" class="btn">Study Now</a>
+                    <div class="unit-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>0% Studied</span>
+                    </div>
+                </div>
+
+                <!-- Unit 15 -->
+                <div class="unit-card">
+                    <div class="unit-icon" style="background-color: #34495e;">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <h3>Unit 15: Modern Physics</h3>
+                    <p>Photoelectric effect, atomic models, nuclear physics</p>
+                    <a href="units/unit15.html" class="btn">Study Now</a>
+                    <div class="unit-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>0% Studied</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Access -->
+        <section class="section">
+            <h2><i class="fas fa-rocket"></i> Quick Access</h2>
+            <div class="quick-access">
+                <a href="flashcards.html" class="quick-card">
+                    <i class="fas fa-layer-group"></i>
+                    <h4>Flashcards</h4>
+                    <p>Create and review study cards</p>
+                </a>
+                <a href="tools/calculator.html" class="quick-card">
+                    <i class="fas fa-calculator"></i>
+                    <h4>Calculator</h4>
+                    <p>Physics calculations & graphing</p>
+                </a>
+                <a href="tools/timer.html" class="quick-card">
+                    <i class="fas fa-stopwatch"></i>
+                    <h4>Study Timer</h4>
+                    <p>Pomodoro & exam timing</p>
+                </a>
+                <a href="tools/practice.html" class="quick-card">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h4>Practice Problems</h4>
+                    <p>FRQs & multiple choice</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Recent Notes -->
+        <section class="section">
+            <h2><i class="fas fa-sticky-note"></i> Recent Notes</h2>
+            <div class="notes-preview">
+                <p>Your notes will appear here as you study each unit.</p>
+                <p>Start by clicking on a unit above and using the note-taking system!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>AP Physics 2 Study Hub • Based on College Board Framework • Made for 2025+ Exam</p>
+        <div class="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Contact</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
