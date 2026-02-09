@@ -1,0 +1,2062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Physics 2 Unit</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/unit-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* PDF and Notes Layout */
+        .pdf-notes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .pdf-section {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #f8f9fa 100%);
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .pdf-header h3 {
+            margin: 0;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pdf-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .pdf-viewer-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+        
+        .pdf-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .pdf-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            color: var(--gray);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        .pdf-placeholder i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+        
+        .pdf-upload-area {
+            padding: 30px;
+            border: 2px dashed var(--light-gray);
+            border-radius: 8px;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pdf-upload-area:hover {
+            border-color: var(--primary);
+            background: #f8fdff;
+        }
+        
+        .pdf-upload-area i {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .pdf-upload-area input {
+            display: none;
+        }
+        
+        /* PDF display alternatives */
+        .pdf-object {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .pdf-alternative-view {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+        }
+        
+        .pdf-alternative-view i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .pdf-alternative-view p {
+            margin: 10px 0;
+            color: var(--gray);
+        }
+        
+        /* Notes Section */
+        .notes-section {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #f8f9fa 100%);
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .notes-header h3 {
+            margin: 0;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notes-toolbar {
+            display: flex;
+            gap: 5px;
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+        
+        .notes-toolbar button {
+            padding: 6px 12px;
+            border: 1px solid #ced4da;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .notes-toolbar button:hover {
+            background: #e9ecef;
+            border-color: var(--primary);
+        }
+        
+        .notes-toolbar button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .notes-area {
+            min-height: 300px;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+        
+        .notes-area:empty:before {
+            content: attr(data-placeholder);
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .notes-area:focus {
+            outline: none;
+        }
+        
+        .notes-area .highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+            padding: 2px 0;
+            border-radius: 2px;
+        }
+        
+        .notes-area .equation {
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #ddd;
+            display: inline-block;
+        }
+        
+        /* Status messages */
+        .status-message {
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .status-message.success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #842029;
+        }
+        
+        .status-message.info {
+            background: #cfe2ff;
+            color: #084298;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Uploaded PDFs List */
+        .uploaded-pdfs {
+            margin-top: 20px;
+        }
+        
+        .uploaded-pdfs h4 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .pdf-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .pdf-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .pdf-list-item .pdf-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .pdf-list-item .pdf-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .pdf-viewer-container {
+                height: 400px;
+            }
+            
+            .pdf-header, .notes-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .pdf-actions, .notes-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .notes-toolbar {
+                justify-content: center;
+            }
+        }
+        
+        /* Loading spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+            color: var(--gray);
+        }
+        
+        .loading-spinner i {
+            margin-bottom: 20px;
+        }
+        
+        /* Unit content grid */
+        .unit-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--light-gray);
+        }
+        
+        /* Quick links section */
+        .quick-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--light-bg);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+        
+        .quick-link:hover {
+            background: var(--primary-light);
+            transform: translateX(5px);
+        }
+        
+        .quick-link i {
+            font-size: 18px;
+            color: var(--primary);
+            min-width: 24px;
+        }
+        
+        /* Progress circle */
+        .progress-circle {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .progress-circle .circle {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+            background: conic-gradient(var(--primary) 0% 0%, var(--light-gray) 0% 100%);
+        }
+        
+        .progress-circle .circle span {
+            position: relative;
+            z-index: 2;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="unit-content">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin fa-3x"></i>
+            <p>Loading unit content...</p>
+        </div>
+    </div>
+
+    <script>
+        // Unit Data (from your unit-loader.js)
+        const unitData = {
+            unit9: {
+                id: 'unit9',
+                title: 'Unit 9: Thermodynamics',
+                subtitle: 'First & Second Laws of Thermodynamics, Heat Engines, PV Diagrams, Entropy',
+                icon: 'fa-fire',
+                color: '#e74c3c',
+                pdfName: 'Thermodynamics',
+                formulas: [
+                    { 
+                        title: 'First Law of Thermodynamics', 
+                        formula: 'ΔU = Q - W', 
+                        description: 'Change in internal energy equals heat added minus work done' 
+                    },
+                    { 
+                        title: 'Ideal Gas Law', 
+                        formula: 'PV = nRT', 
+                        description: 'Pressure × Volume = moles × gas constant × temperature' 
+                    },
+                    { 
+                        title: 'Efficiency of Heat Engine', 
+                        formula: 'η = 1 - Q<sub>c</sub>/Q<sub>h</sub>', 
+                        description: 'Efficiency equals 1 minus cold reservoir heat over hot reservoir heat' 
+                    },
+                    { 
+                        title: 'Entropy Change', 
+                        formula: 'ΔS = Q/T', 
+                        description: 'Entropy change equals heat transfer divided by temperature' 
+                    }
+                ],
+                videos: [
+                    { 
+                        title: 'Internal Energy & First Law', 
+                        url: 'https://www.youtube.com/embed/ZGiK1_KvJoM', 
+                        source: 'Khan Academy - AP Physics 2' 
+                    },
+                    { 
+                        title: 'PV Diagrams & Thermodynamics', 
+                        url: 'https://www.youtube.com/embed/4S1kKRX6RKI', 
+                        source: 'Bozeman Science' 
+                    }
+                ],
+                practiceLinks: [
+                    { 
+                        icon: 'fa-file-alt', 
+                        title: 'Free Response Questions', 
+                        description: 'Official College Board FRQs', 
+                        href: '../tools/practice.html?unit=9&type=frq' 
+                    },
+                    { 
+                        icon: 'fa-list-ol', 
+                        title: 'Multiple Choice', 
+                        description: 'Practice questions with explanations', 
+                        href: '../tools/practice.html?unit=9&type=mc' 
+                    },
+                    { 
+                        icon: 'fa-flask', 
+                        title: 'PhET Simulation', 
+                        description: 'Gas Properties Interactive Lab', 
+                        href: 'https://phet.colorado.edu/sims/html/gas-properties/latest/gas-properties_en.html', 
+                        target: true 
+                    }
+                ],
+                quickLinks: [
+                    { 
+                        icon: 'fa-layer-group', 
+                        text: 'Unit 9 Flashcards', 
+                        href: '../flashcards.html?unit=9' 
+                    },
+                    { 
+                        icon: 'fa-draw-polygon', 
+                        text: 'Draw PV Diagrams', 
+                        href: '../tools/whiteboard.html?type=pv-diagram' 
+                    },
+                    { 
+                        icon: 'fa-calculator', 
+                        text: 'Thermo Calculator', 
+                        href: '../tools/calculator.html?formula=thermo' 
+                    },
+                    { 
+                        icon: 'fa-stopwatch', 
+                        text: '25-min Study Timer', 
+                        href: '../tools/timer.html?duration=25' 
+                    }
+                ]
+            },
+            
+            unit10: {
+                id: 'unit10',
+                title: 'Unit 10: Electric Force & Field',
+                subtitle: 'Coulomb\'s Law, Electric Field Lines, Electric Potential, Capacitance',
+                icon: 'fa-bolt',
+                color: '#3498db',
+                pdfName: 'Electric Forces and Fields',
+                formulas: [
+                    { 
+                        title: 'Coulomb\'s Law', 
+                        formula: 'F = k|q₁q₂|/r²', 
+                        description: 'Force between charges equals constant times product of charges divided by distance squared' 
+                    },
+                    { 
+                        title: 'Electric Field', 
+                        formula: 'E = F/q', 
+                        description: 'Electric field equals force per unit charge' 
+                    },
+                    { 
+                        title: 'Electric Potential Energy', 
+                        formula: 'U = kq₁q₂/r', 
+                        description: 'Potential energy equals constant times product of charges divided by distance' 
+                    },
+                    { 
+                        title: 'Capacitance', 
+                        formula: 'C = Q/V', 
+                        description: 'Capacitance equals charge divided by voltage' 
+                    }
+                ],
+                videos: [
+                    { 
+                        title: 'Electric Fields & Forces', 
+                        url: 'https://www.youtube.com/embed/kkSvMIZexWs', 
+                        source: 'Khan Academy' 
+                    },
+                    { 
+                        title: 'Electric Potential & Voltage', 
+                        url: 'https://www.youtube.com/embed/LzKMQByFSLc', 
+                        source: 'Bozeman Science' 
+                    }
+                ],
+                practiceLinks: [
+                    { 
+                        icon: 'fa-file-alt', 
+                        title: 'Free Response Questions', 
+                        description: 'Official College Board FRQs', 
+                        href: '../tools/practice.html?unit=10&type=frq' 
+                    },
+                    { 
+                        icon: 'fa-list-ol', 
+                        title: 'Multiple Choice', 
+                        description: 'Practice questions with explanations', 
+                        href: '../tools/practice.html?unit=10&type=mc' 
+                    },
+                    { 
+                        icon: 'fa-flask', 
+                        title: 'PhET Simulation', 
+                        description: 'Charges and Fields', 
+                        href: 'https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_en.html', 
+                        target: true 
+                    }
+                ],
+                quickLinks: [
+                    { 
+                        icon: 'fa-layer-group', 
+                        text: 'Unit 10 Flashcards', 
+                        href: '../flashcards.html?unit=10' 
+                    },
+                    { 
+                        icon: 'fa-draw-polygon', 
+                        text: 'Draw Field Lines', 
+                        href: '../tools/whiteboard.html?type=field' 
+                    },
+                    { 
+                        icon: 'fa-calculator', 
+                        text: 'Electric Calculator', 
+                        href: '../tools/calculator.html?formula=electric' 
+                    },
+                    { 
+                        icon: 'fa-stopwatch', 
+                        text: '30-min Study Timer', 
+                        href: '../tools/timer.html?duration=30' 
+                    }
+                ]
+            },
+            
+            unit11: {
+                id: 'unit11',
+                title: 'Unit 11: Electric Circuits',
+                subtitle: 'Ohm\'s Law, Series/Parallel Circuits, Capacitors, RC Circuits',
+                icon: 'fa-bolt',
+                color: '#2ecc71',
+                pdfName: 'Electric Circuits',
+                formulas: [
+                    { 
+                        title: 'Ohm\'s Law', 
+                        formula: 'V = IR', 
+                        description: 'Voltage equals current times resistance' 
+                    },
+                    { 
+                        title: 'Power in Circuits', 
+                        formula: 'P = IV = I²R = V²/R', 
+                        description: 'Power equals current times voltage' 
+                    },
+                    { 
+                        title: 'Resistors in Series', 
+                        formula: 'R<sub>total</sub> = R₁ + R₂ + ...', 
+                        description: 'Total resistance equals sum of individual resistances' 
+                    },
+                    { 
+                        title: 'Resistors in Parallel', 
+                        formula: '1/R<sub>total</sub> = 1/R₁ + 1/R₂ + ...', 
+                        description: 'Reciprocal of total resistance equals sum of reciprocals' 
+                    }
+                ],
+                videos: [
+                    { 
+                        title: 'Circuit Analysis Basics', 
+                        url: 'https://www.youtube.com/embed/Zl90tZYV_1s', 
+                        source: 'Khan Academy' 
+                    },
+                    { 
+                        title: 'RC Circuits', 
+                        url: 'https://www.youtube.com/embed/PLQrPqYlPmI', 
+                        source: 'Bozeman Science' 
+                    }
+                ],
+                practiceLinks: [
+                    { 
+                        icon: 'fa-file-alt', 
+                        title: 'Free Response Questions', 
+                        description: 'Official College Board FRQs', 
+                        href: '../tools/practice.html?unit=11&type=frq' 
+                    },
+                    { 
+                        icon: 'fa-list-ol', 
+                        title: 'Multiple Choice', 
+                        description: 'Practice questions with explanations', 
+                        href: '../tools/practice.html?unit=11&type=mc' 
+                    },
+                    { 
+                        icon: 'fa-flask', 
+                        title: 'PhET Simulation', 
+                        description: 'Circuit Construction Kit', 
+                        href: 'https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_en.html', 
+                        target: true 
+                    }
+                ],
+                quickLinks: [
+                    { 
+                        icon: 'fa-layer-group', 
+                        text: 'Unit 11 Flashcards', 
+                        href: '../flashcards.html?unit=11' 
+                    },
+                    { 
+                        icon: 'fa-draw-polygon', 
+                        text: 'Draw Circuits', 
+                        href: '../tools/whiteboard.html?type=circuit' 
+                    },
+                    { 
+                        icon: 'fa-calculator', 
+                        text: 'Circuit Calculator', 
+                        href: '../tools/calculator.html?formula=circuit' 
+                    },
+                    { 
+                        icon: 'fa-stopwatch', 
+                        text: '35-min Study Timer', 
+                        href: '../tools/timer.html?duration=35' 
+                    }
+                ]
+            },
+            
+            unit12: {
+                id: 'unit12',
+                title: 'Unit 12: Magnetism & Electromagnetism',
+                subtitle: 'Magnetic Fields, Faraday\'s Law, Lenz\'s Law, Inductors',
+                icon: 'fa-magnet',
+                color: '#9b59b6',
+                pdfName: 'Magnetism and Electromagnetism',
+                formulas: [
+                    { 
+                        title: 'Magnetic Force on Charge', 
+                        formula: 'F = qvB sinθ', 
+                        description: 'Force equals charge times velocity times magnetic field times sine of angle' 
+                    },
+                    { 
+                        title: 'Magnetic Force on Wire', 
+                        formula: 'F = ILB sinθ', 
+                        description: 'Force equals current times length times magnetic field times sine of angle' 
+                    },
+                    { 
+                        title: 'Faraday\'s Law', 
+                        formula: 'ε = -N(ΔΦ/Δt)', 
+                        description: 'Induced emf equals negative turns times rate of change of flux' 
+                    },
+                    { 
+                        title: 'Magnetic Flux', 
+                        formula: 'Φ = BA cosθ', 
+                        description: 'Flux equals magnetic field times area times cosine of angle' 
+                    }
+                ],
+                videos: [
+                    { 
+                        title: 'Magnetic Forces', 
+                        url: 'https://www.youtube.com/embed/LeA_4bHXmoQ', 
+                        source: 'Khan Academy' 
+                    },
+                    { 
+                        title: 'Electromagnetic Induction', 
+                        url: 'https://www.youtube.com/embed/7pt8K5D8p9g', 
+                        source: 'Bozeman Science' 
+                    }
+                ],
+                practiceLinks: [
+                    { 
+                        icon: 'fa-file-alt', 
+                        title: 'Free Response Questions', 
+                        description: 'Official College Board FRQs', 
+                        href: '../tools/practice.html?unit=12&type=frq' 
+                    },
+                    { 
+                        icon: 'fa-list-ol', 
+                        title: 'Multiple Choice', 
+                        description: 'Practice questions with explanations', 
+                        href: '../tools/practice.html?unit=12&type=mc' 
+                    },
+                    { 
+                        icon: 'fa-flask', 
+                        title: 'PhET Simulation', 
+                        description: 'Faraday\'s Law', 
+                        href: 'https://phet.colorado.edu/sims/html/faradays-law/latest/faradays-law_en.html', 
+                        target: true 
+                    }
+                ],
+                quickLinks: [
+                    { 
+                        icon: 'fa-layer-group', 
+                        text: 'Unit 12 Flashcards', 
+                        href: '../flashcards.html?unit=12' 
+                    },
+                    { 
+                        icon: 'fa-draw-polygon', 
+                        text: 'Draw Magnetic Fields', 
+                        href: '../tools/whiteboard.html?type=magnet' 
+                    },
+                    { 
+                        icon: 'fa-calculator', 
+                        text: 'Magnetism Calculator', 
+                        href: '../tools/calculator.html?formula=magnet' 
+                    },
+                    { 
+                        icon: 'fa-stopwatch', 
+                        text: '30-min Study Timer', 
+                        href: '../tools/timer.html?duration=30' 
+                    }
+                ]
+            },
+            
+            unit13: {
+                id: 'unit13',
+                title: 'Unit 13: Geometric & Physical Optics',
+                subtitle: 'Reflection, Refraction, Lenses, Mirrors, Interference, Diffraction',
+                icon: 'fa-eye',
+                color: '#1abc9c',
+                pdfName: 'Optics',
+                formulas: [
+                    { 
+                        title: 'Snell\'s Law', 
+                        formula: 'n₁ sinθ₁ = n₂ sinθ₂', 
+                        description: 'Refractive index times sine of angle is constant' 
+                    },
+                    { 
+                        title: 'Lens Equation', 
+                        formula: '1/f = 1/d<sub>o</sub> + 1/d<sub>i</sub>', 
+                        description: 'Reciprocal of focal length equals sum of reciprocals of object and image distances' 
+                    },
+                    { 
+                        title: 'Magnification', 
+                        formula: 'm = -d<sub>i</sub>/d<sub>o</sub> = h<sub>i</sub>/h<sub>o</sub>', 
+                        description: 'Magnification equals negative image distance over object distance' 
+                    },
+                    { 
+                        title: 'Double Slit Interference', 
+                        formula: 'd sinθ = mλ', 
+                        description: 'Path difference equals integer times wavelength for constructive interference' 
+                    }
+                ],
+                videos: [
+                    { 
+                        title: 'Refraction & Snell\'s Law', 
+                        url: 'https://www.youtube.com/embed/wCGt6W7_S4Y', 
+                        source: 'Khan Academy' 
+                    },
+                    { 
+                        title: 'Thin Lens Equation', 
+                        url: 'https://www.youtube.com/embed/3iLPg7twO6Q', 
+                        source: 'Bozeman Science' 
+                    }
+                ],
+                practiceLinks: [
+                    { 
+                        icon: 'fa-file-alt', 
+                        title: 'Free Response Questions', 
+                        description: 'Official College Board FRQs', 
+                        href: '../tools/practice.html?unit=13&type=frq' 
+                    },
+                    { 
+                        icon: 'fa-list-ol', 
+                        title: 'Multiple Choice', 
+                        description: 'Practice questions with explanations', 
+                        href: '../tools/practice.html?unit=13&type=mc' 
+                    },
+                    { 
+                        icon: 'fa-flask', 
+                        title: 'PhET Simulation', 
+                        description: 'Geometric Optics', 
+                        href: 'https://phet.colorado.edu/sims/html/geometric-optics/latest/geometric-optics_en.html', 
+                        target: true 
+                    }
+                ],
+                quickLinks: [
+                    { 
+                        icon: 'fa-layer-group', 
+                        text: 'Unit 13 Flashcards', 
+                        href: '../flashcards.html?unit=13' 
+                    },
+                    { 
+                        icon: 'fa-draw-polygon', 
+                        text: 'Draw Ray Diagrams', 
+                        href: '../tools/whiteboard.html?type=lens' 
+                    },
+                    { 
+                        icon: 'fa-calculator', 
+                        text: 'Optics Calculator', 
+                        href: '../tools/calculator.html?formula=optics' 
+                    },
+                    { 
+                        icon: 'fa-stopwatch', 
+                        text: '25-min Study Timer', 
+                        href: '../tools/timer.html?duration=25' 
+                    }
+                ]
+            },
+            
+            unit14: {
+                id: 'unit14',
+                title: 'Unit 14: Waves & Sound',
+                subtitle: 'Wave Basics, Sound Properties, Doppler Effect, Standing Waves',
+                icon: 'fa-wave-square',
+                color: '#f39c12',
+                pdfName: 'Waves',
+                formulas: [
+                    { 
+                        title: 'Wave Equation', 
+                        formula: 'v = fλ', 
+                        description: 'Velocity equals frequency times wavelength' 
+                    },
+                    { 
+                        title: 'Intensity of Sound', 
+                        formula: 'I = P/A', 
+                        description: 'Intensity equals power divided by area' 
+                    },
+                    { 
+                        title: 'Beat Frequency', 
+                        formula: 'f<sub>beat</sub> = |f₁ - f₂|', 
+                        description: 'Beat frequency equals absolute difference between frequencies' 
+                    },
+                    { 
+                        title: 'Doppler Effect', 
+                        formula: 'f\' = f(v ± v<sub>o</sub>)/(v ∓ v<sub>s</sub>)', 
+                        description: 'Observed frequency depends on relative motion' 
+                    }
+                ],
+                videos: [
+                    { 
+                        title: 'Wave Interference', 
+                        url: 'https://www.youtube.com/embed/0uv_6LcM218', 
+                        source: 'Khan Academy' 
+                    },
+                    { 
+                        title: 'Sound & Doppler Effect', 
+                        url: 'https://www.youtube.com/embed/gWGLACy7-FE', 
+                        source: 'Bozeman Science' 
+                    }
+                ],
+                practiceLinks: [
+                    { 
+                        icon: 'fa-file-alt', 
+                        title: 'Free Response Questions', 
+                        description: 'Official College Board FRQs', 
+                        href: '../tools/practice.html?unit=14&type=frq' 
+                    },
+                    { 
+                        icon: 'fa-list-ol', 
+                        title: 'Multiple Choice', 
+                        description: 'Practice questions with explanations', 
+                        href: '../tools/practice.html?unit=14&type=mc' 
+                    },
+                    { 
+                        icon: 'fa-flask', 
+                        title: 'PhET Simulation', 
+                        description: 'Wave Interference', 
+                        href: 'https://phet.colorado.edu/sims/html/wave-interference/latest/wave-interference_en.html', 
+                        target: true 
+                    }
+                ],
+                quickLinks: [
+                    { 
+                        icon: 'fa-layer-group', 
+                        text: 'Unit 14 Flashcards', 
+                        href: '../flashcards.html?unit=14' 
+                    },
+                    { 
+                        icon: 'fa-draw-polygon', 
+                        text: 'Draw Wave Diagrams', 
+                        href: '../tools/whiteboard.html?type=wave' 
+                    },
+                    { 
+                        icon: 'fa-calculator', 
+                        text: 'Wave Calculator', 
+                        href: '../tools/calculator.html?formula=wave' 
+                    },
+                    { 
+                        icon: 'fa-stopwatch', 
+                        text: '40-min Study Timer', 
+                        href: '../tools/timer.html?duration=40' 
+                    }
+                ]
+            },
+            
+            unit15: {
+                id: 'unit15',
+                title: 'Unit 15: Modern Physics',
+                subtitle: 'Photoelectric Effect, Atomic Models, Nuclear Physics, Quantum Mechanics',
+                icon: 'fa-atom',
+                color: '#34495e',
+                pdfName: 'Modern Physics',
+                formulas: [
+                    { 
+                        title: 'Photoelectric Effect', 
+                        formula: 'E = hf = hc/λ', 
+                        description: 'Energy equals Planck\'s constant times frequency' 
+                    },
+                    { 
+                        title: 'De Broglie Wavelength', 
+                        formula: 'λ = h/p', 
+                        description: 'Wavelength equals Planck\'s constant divided by momentum' 
+                    },
+                    { 
+                        title: 'Energy-Mass Equivalence', 
+                        formula: 'E = mc²', 
+                        description: 'Energy equals mass times speed of light squared' 
+                    },
+                    { 
+                        title: 'Radioactive Decay', 
+                        formula: 'N = N₀e⁻ᵏᵗ', 
+                        description: 'Number of nuclei decreases exponentially with time' 
+                    }
+                ],
+                videos: [
+                    { 
+                        title: 'Photoelectric Effect', 
+                        url: 'https://www.youtube.com/embed/vee6cCqZJ-8', 
+                        source: 'Khan Academy' 
+                    },
+                    { 
+                        title: 'Quantum Mechanics', 
+                        url: 'https://www.youtube.com/embed/MtVZb2yW1eo', 
+                        source: 'Bozeman Science' 
+                    }
+                ],
+                practiceLinks: [
+                    { 
+                        icon: 'fa-file-alt', 
+                        title: 'Free Response Questions', 
+                        description: 'Official College Board FRQs', 
+                        href: '../tools/practice.html?unit=15&type=frq' 
+                    },
+                    { 
+                        icon: 'fa-list-ol', 
+                        title: 'Multiple Choice', 
+                        description: 'Practice questions with explanations', 
+                        href: '../tools/practice.html?unit=15&type=mc' 
+                    },
+                    { 
+                        icon: 'fa-flask', 
+                        title: 'PhET Simulation', 
+                        description: 'Photoelectric Effect', 
+                        href: 'https://phet.colorado.edu/sims/html/photoelectric/latest/photoelectric_en.html', 
+                        target: true 
+                    }
+                ],
+                quickLinks: [
+                    { 
+                        icon: 'fa-layer-group', 
+                        text: 'Unit 15 Flashcards', 
+                        href: '../flashcards.html?unit=15' 
+                    },
+                    { 
+                        icon: 'fa-draw-polygon', 
+                        text: 'Draw Energy Levels', 
+                        href: '../tools/whiteboard.html?type=atom' 
+                    },
+                    { 
+                        icon: 'fa-calculator', 
+                        text: 'Modern Physics Calculator', 
+                        href: '../tools/calculator.html?formula=modern' 
+                    },
+                    { 
+                        icon: 'fa-stopwatch', 
+                        text: '45-min Study Timer', 
+                        href: '../tools/timer.html?duration=45' 
+                    }
+                ]
+            }
+        };
+
+        // PDF file mapping
+        const pdfFiles = {
+            'Thermodynamics': 'thermodynamics.pdf',
+            'Electric Forces and Fields': 'fields.pdf',
+            'Electric Circuits': 'circuits.pdf',
+            'Capacitance': 'capacitance.pdf',
+            'Test 1': 'test1.pdf',
+            'Test 2': 'test2.pdf',
+            'Magnetism and Electromagnetism': 'magnetism.pdf',
+            'Modern Physics': 'modern.pdf',
+            'Optics': 'optics.pdf',
+            'Waves': 'waves.pdf'
+        };
+
+        // Get unit ID from URL parameter
+        function getUnitIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const unitParam = urlParams.get('unit');
+            return unitParam || 'unit9';
+        }
+        
+        // Global variable to track current unit
+        let currentUnitId = null;
+        
+        // Load unit content when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const unitId = getUnitIdFromUrl();
+            currentUnitId = unitId;
+            loadUnitContent(unitId);
+        });
+        
+        // Load the unit content dynamically
+        function loadUnitContent(unitId) {
+            const unit = unitData[unitId];
+            if (!unit) {
+                showError(`Unit "${unitId}" not found.`);
+                return;
+            }
+            
+            // Update page title
+            document.title = unit.title + ' | AP Physics 2 Hub';
+            
+            // Generate and insert the HTML
+            document.getElementById('unit-content').innerHTML = generateUnitHTML(unit);
+            
+            // Initialize unit-specific functionality
+            initializeUnit(unitId);
+        }
+        
+        // Generate HTML for a unit
+        function generateUnitHTML(unit) {
+            // Escape HTML in text to prevent XSS
+            function escapeHTML(text) {
+                if (!text) return '';
+                return text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+            
+            // Format formula HTML safely
+            function formatFormula(formula) {
+                if (!formula) return '';
+                return formula
+                    .replace(/<sub>/g, '<sub>')
+                    .replace(/<\/sub>/g, '</sub>')
+                    .replace(/<sup>/g, '<sup>')
+                    .replace(/<\/sup>/g, '</sup>');
+            }
+            
+            // Check if there's a built-in PDF for this unit
+            const hasBuiltInPDF = pdfFiles[unit.pdfName];
+            
+            return `
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-atom"></i>
+                    <span>AP Physics 2 Hub</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="dropdown">
+                        <a href="#"><i class="fas fa-book"></i> Units <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content">
+                            ${Object.values(unitData).map(u => `
+                                <a href="unit.html?unit=${u.id}" ${u.id === unit.id ? 'class="active"' : ''}>
+                                    ${escapeHTML(u.title)}
+                                </a>
+                            `).join('')}
+                        </div>
+                    </li>
+                    <li><a href="../flashcards.html"><i class="fas fa-layer-group"></i> Flashcards</a></li>
+                    <li><a href="../tools/whiteboard.html"><i class="fas fa-draw-polygon"></i> Diagrams</a></li>
+                    <li><a href="../tools/practice.html"><i class="fas fa-clipboard-list"></i> Practice</a></li>
+                    <li><a href="../tools/calculator.html"><i class="fas fa-calculator"></i> Calculator</a></li>
+                </ul>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+
+            <main class="container unit-container">
+                <header class="unit-header">
+                    <div class="unit-title">
+                        <div class="unit-icon-large" style="background-color: ${unit.color};">
+                            <i class="fas ${unit.icon}"></i>
+                        </div>
+                        <div>
+                            <h1>${escapeHTML(unit.title)}</h1>
+                            <p class="unit-subtitle">${escapeHTML(unit.subtitle)}</p>
+                        </div>
+                    </div>
+                    <div class="unit-actions">
+                        <button onclick="markAsStudied('${unit.id}')" class="btn btn-success">
+                            <i class="fas fa-check-circle"></i> Mark as Studied
+                        </button>
+                        <button onclick="exportNotes('${unit.id}')" class="btn">
+                            <i class="fas fa-download"></i> Export Notes
+                        </button>
+                    </div>
+                </header>
+
+                <div class="unit-content">
+                    <!-- PDF Upload and Viewer Section -->
+                    <div class="pdf-notes-container">
+                        <div class="pdf-section content-section">
+                            <div class="pdf-header">
+                                <h3><i class="fas fa-file-pdf"></i> ${escapeHTML(unit.pdfName)}</h3>
+                                <div class="pdf-actions">
+                                    <button onclick="removeCurrentPDF('${unit.id}')" class="btn btn-small" id="remove-pdf-btn" style="display: none;">
+                                        <i class="fas fa-trash"></i> Remove PDF
+                                    </button>
+                                    <button onclick="downloadCurrentPDF('${unit.id}')" class="btn btn-small" id="download-pdf-btn" style="display: none;">
+                                        <i class="fas fa-download"></i> Download
+                                    </button>
+                                    <button onclick="openPDFInNewTab('${unit.id}')" class="btn btn-small" id="open-pdf-btn" style="display: none;">
+                                        <i class="fas fa-external-link-alt"></i> Open
+                                    </button>
+                                    ${hasBuiltInPDF ? `
+                                    <button onclick="loadBuiltInPDF('${unit.pdfName}')" class="btn btn-small btn-primary">
+                                        <i class="fas fa-book"></i> Load Unit PDF
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <div id="pdf-viewer-container" class="pdf-viewer-container">
+                                <!-- PDF will be loaded here -->
+                                ${hasBuiltInPDF ? `
+                                <iframe 
+                                    src="../pdfs/${pdfFiles[unit.pdfName]}" 
+                                    class="pdf-iframe"
+                                    title="${unit.pdfName} PDF"
+                                >
+                                    Your browser does not support iframes.
+                                </iframe>
+                                ` : `
+                                <div class="pdf-placeholder">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <h3>No PDF Loaded</h3>
+                                    <p>Upload a PDF or load the unit PDF to get started</p>
+                                </div>
+                                `}
+                            </div>
+                            
+                            <div id="pdf-upload-section" class="pdf-upload-area" onclick="document.getElementById('pdf-upload-input').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h4>Upload Your Own PDF for this Unit</h4>
+                                <p>Click here or drag and drop a PDF file</p>
+                                <p><small>Supported formats: .pdf (Max: 25MB)</small></p>
+                                <input type="file" id="pdf-upload-input" accept=".pdf" onchange="uploadPDF(event, '${unit.id}')">
+                            </div>
+                            
+                            <div id="uploaded-pdfs-section" class="uploaded-pdfs" style="display: none;">
+                                <h4>Your Uploaded PDFs for this Unit:</h4>
+                                <div id="pdf-list" class="pdf-list">
+                                    <!-- Uploaded PDFs will be listed here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notes Section (Right below PDF) -->
+                        <div class="notes-section content-section">
+                            <div class="notes-header">
+                                <h3><i class="fas fa-sticky-note"></i> Interactive Notes</h3>
+                                <div class="notes-actions">
+                                    <button onclick="clearNotes('${unit.id}')" class="btn btn-small">
+                                        <i class="fas fa-trash"></i> Clear
+                                    </button>
+                                    <button onclick="saveNotes('${unit.id}')" class="btn btn-small">
+                                        <i class="fas fa-save"></i> Save
+                                    </button>
+                                    <button onclick="formatAllEquations()" class="btn btn-small">
+                                        <i class="fas fa-square-root-alt"></i> Format Equations
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="notes-toolbar">
+                                <button onclick="formatText('bold')" title="Bold" id="bold-btn">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button onclick="formatText('italic')" title="Italic" id="italic-btn">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button onclick="formatText('underline')" title="Underline" id="underline-btn">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                                <button onclick="addHighlight()" title="Highlight" id="highlight-btn">
+                                    <i class="fas fa-highlighter"></i> Highlight
+                                </button>
+                                <button onclick="addEquation()" title="Add Equation">
+                                    <i class="fas fa-square-root-alt"></i> Equation
+                                </button>
+                                <button onclick="insertPageReference()" title="Add Page Reference">
+                                    <i class="fas fa-bookmark"></i> Page Ref
+                                </button>
+                            </div>
+                            
+                            <div id="unit-notes" 
+                                 class="notes-area" 
+                                 contenteditable="true"
+                                 data-placeholder="Type your notes here... Add equations, highlights, and page references as you study the PDF above. Notes auto-save every 2 seconds.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Key Formulas Section -->
+                    <section class="content-section">
+                        <h2><i class="fas fa-calculator"></i> Key Formulas</h2>
+                        <div class="formulas-grid">
+                            ${unit.formulas ? unit.formulas.map(formula => `
+                                <div class="formula-card">
+                                    <h3>${escapeHTML(formula.title)}</h3>
+                                    <p class="formula">${formatFormula(escapeHTML(formula.formula))}</p>
+                                    <p>${escapeHTML(formula.description)}</p>
+                                </div>
+                            `).join('') : '<p>No formulas available.</p>'}
+                        </div>
+                    </section>
+
+                    <!-- Video Tutorials Section -->
+                    <section class="content-section">
+                        <h2><i class="fas fa-video"></i> Video Tutorials</h2>
+                        <div class="videos-grid">
+                            ${unit.videos ? unit.videos.map(video => `
+                                <div class="video-card">
+                                    <h3>${escapeHTML(video.title)}</h3>
+                                    <div class="video-wrapper">
+                                        <iframe src="${video.url}" 
+                                                title="${escapeHTML(video.title)}"
+                                                frameborder="0" 
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen></iframe>
+                                    </div>
+                                    <p>${escapeHTML(video.source)}</p>
+                                </div>
+                            `).join('') : '<p>No videos available.</p>'}
+                        </div>
+                    </section>
+
+                    <!-- Practice Problems Section -->
+                    <section class="content-section">
+                        <h2><i class="fas fa-clipboard-check"></i> Practice Problems</h2>
+                        <div class="practice-cards">
+                            ${unit.practiceLinks ? unit.practiceLinks.map(link => `
+                                <a href="${link.href}" ${link.target ? 'target="_blank"' : ''} class="practice-card">
+                                    <i class="fas ${link.icon}"></i>
+                                    <h4>${escapeHTML(link.title)}</h4>
+                                    <p>${escapeHTML(link.description)}</p>
+                                </a>
+                            `).join('') : '<p>No practice links available.</p>'}
+                        </div>
+                    </section>
+                    
+                    <!-- Sidebar Content (moved to bottom on mobile) -->
+                    <div class="unit-sidebar-grid">
+                        <section class="content-section">
+                            <h2><i class="fas fa-link"></i> Quick Links</h2>
+                            <div class="quick-links">
+                                ${unit.quickLinks ? unit.quickLinks.map(link => `
+                                    <a href="${link.href}" class="quick-link">
+                                        <i class="fas ${link.icon}"></i>
+                                        <span>${escapeHTML(link.text)}</span>
+                                    </a>
+                                `).join('') : '<p>No quick links available.</p>'}
+                            </div>
+                        </section>
+
+                        <section class="content-section">
+                            <h2><i class="fas fa-chart-line"></i> Study Progress</h2>
+                            <div class="progress-circle">
+                                <div class="circle" id="${unit.id}-progress-circle">
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-info">
+                                    <h3>${escapeHTML(unit.title)} Progress</h3>
+                                    <p>Track your learning journey</p>
+                                    <button onclick="updateProgress('${unit.id}', 25)" class="btn-small">
+                                        +25% Progress
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+            `;
+        }
+        
+        // Initialize unit functionality
+        function initializeUnit(unitId) {
+            currentUnitId = unitId;
+            
+            // Initialize notes
+            initializeNotes(unitId);
+            
+            // Load any existing uploaded PDF for this unit
+            loadUploadedPDF(unitId);
+            
+            // Setup mobile menu
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                });
+            }
+            
+            // Initialize drag and drop for PDF upload
+            initDragAndDrop();
+            
+            // Update progress circle
+            updateProgressCircle(unitId);
+        }
+        
+        // Initialize drag and drop functionality
+        function initDragAndDrop() {
+            const uploadArea = document.getElementById('pdf-upload-section');
+            if (!uploadArea) return;
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.borderColor = 'var(--primary)';
+                this.style.background = '#f0f9ff';
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.borderColor = 'var(--light-gray)';
+                this.style.background = 'white';
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.borderColor = 'var(--light-gray)';
+                this.style.background = 'white';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'application/pdf') {
+                    uploadPDF({ target: { files: files } }, currentUnitId);
+                } else {
+                    showStatusMessage('Please drop a PDF file only.', 'error');
+                }
+            });
+        }
+        
+        // Load built-in PDF for unit
+        function loadBuiltInPDF(pdfName) {
+            const pdfFilename = pdfFiles[pdfName];
+            if (!pdfFilename) {
+                showStatusMessage('No built-in PDF found for this unit.', 'error');
+                return;
+            }
+            
+            const container = document.getElementById('pdf-viewer-container');
+            const uploadSection = document.getElementById('pdf-upload-section');
+            const removeBtn = document.getElementById('remove-pdf-btn');
+            const downloadBtn = document.getElementById('download-pdf-btn');
+            const openBtn = document.getElementById('open-pdf-btn');
+            
+            if (container) {
+                container.innerHTML = `
+                    <iframe 
+                        src="../pdfs/${pdfFilename}" 
+                        class="pdf-iframe"
+                        title="${pdfName} PDF"
+                    >
+                        Your browser does not support iframes.
+                    </iframe>
+                `;
+                
+                // Hide upload section, show control buttons
+                if (uploadSection) uploadSection.style.display = 'none';
+                if (removeBtn) removeBtn.style.display = 'inline-block';
+                if (downloadBtn) downloadBtn.style.display = 'inline-block';
+                if (openBtn) openBtn.style.display = 'inline-block';
+                
+                showStatusMessage(`Loaded built-in PDF: ${pdfName}`, 'success');
+            }
+        }
+        
+        // Upload PDF function
+        function uploadPDF(event, unitId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.type !== 'application/pdf') {
+                showStatusMessage('Please select a PDF file.', 'error');
+                return;
+            }
+            
+            if (file.size > 25 * 1024 * 1024) { // 25MB limit
+                showStatusMessage('File too large. Maximum size is 25MB.', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const pdfData = {
+                    name: file.name,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                    data: e.target.result, // data URL
+                    uploaded: new Date().toISOString(),
+                    blobUrl: null // We'll create this when needed
+                };
+                
+                // Save to localStorage
+                const unitPDFs = JSON.parse(localStorage.getItem(`unit_pdfs_${unitId}`) || '[]');
+                unitPDFs.push(pdfData);
+                localStorage.setItem(`unit_pdfs_${unitId}`, JSON.stringify(unitPDFs));
+                
+                // Display the uploaded PDF
+                displayUploadedPDF(pdfData, unitId);
+                
+                // Show uploaded PDFs list
+                showUploadedPDFs(unitId);
+                
+                showStatusMessage(`PDF "${file.name}" uploaded successfully!`, 'success');
+            };
+            
+            reader.onerror = function() {
+                showStatusMessage('Error reading PDF file.', 'error');
+            };
+            
+            reader.readAsDataURL(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+        
+        // Display uploaded PDF
+        function displayUploadedPDF(pdfData, unitId) {
+            const container = document.getElementById('pdf-viewer-container');
+            const uploadSection = document.getElementById('pdf-upload-section');
+            const removeBtn = document.getElementById('remove-pdf-btn');
+            const downloadBtn = document.getElementById('download-pdf-btn');
+            const openBtn = document.getElementById('open-pdf-btn');
+            
+            if (!container) return;
+            
+            // Create blob URL for the PDF data
+            const byteString = atob(pdfData.data.split(',')[1]);
+            const mimeString = pdfData.data.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            
+            const blob = new Blob([ab], { type: mimeString });
+            const blobUrl = URL.createObjectURL(blob);
+            
+            // Store blob URL in the pdfData
+            pdfData.blobUrl = blobUrl;
+            
+            // Use iframe for PDF display
+            const iframeHTML = `
+                <iframe 
+                    src="${blobUrl}" 
+                    class="pdf-iframe"
+                    title="${pdfData.name}"
+                >
+                    Your browser does not support iframes.
+                </iframe>
+            `;
+            
+            container.innerHTML = iframeHTML;
+            
+            // Hide upload section, show control buttons
+            if (uploadSection) uploadSection.style.display = 'none';
+            if (removeBtn) removeBtn.style.display = 'inline-block';
+            if (downloadBtn) downloadBtn.style.display = 'inline-block';
+            if (openBtn) openBtn.style.display = 'inline-block';
+            
+            // Store the blob URL for cleanup
+            if (!window.pdfBlobUrls) window.pdfBlobUrls = {};
+            window.pdfBlobUrls[unitId] = blobUrl;
+        }
+        
+        // Open PDF in new tab
+        function openPDFInNewTab(unitId) {
+            const container = document.getElementById('pdf-viewer-container');
+            const iframe = container ? container.querySelector('iframe') : null;
+            
+            if (iframe && iframe.src) {
+                window.open(iframe.src, '_blank');
+            } else {
+                // Try to get uploaded PDF
+                const unitPDFs = JSON.parse(localStorage.getItem(`unit_pdfs_${unitId}`) || '[]');
+                if (unitPDFs.length > 0) {
+                    const latestPDF = unitPDFs[unitPDFs.length - 1];
+                    if (latestPDF.blobUrl) {
+                        window.open(latestPDF.blobUrl, '_blank');
+                    }
+                }
+            }
+        }
+        
+        // Load uploaded PDF from localStorage
+        function loadUploadedPDF(unitId) {
+            const unitPDFs = JSON.parse(localStorage.getItem(`unit_pdfs_${unitId}`) || '[]');
+            
+            if (unitPDFs.length > 0) {
+                // Display the most recent uploaded PDF
+                const latestPDF = unitPDFs[unitPDFs.length - 1];
+                displayUploadedPDF(latestPDF, unitId);
+                showUploadedPDFs(unitId);
+            }
+        }
+        
+        // Show uploaded PDFs list
+        function showUploadedPDFs(unitId) {
+            const unitPDFs = JSON.parse(localStorage.getItem(`unit_pdfs_${unitId}`) || '[]');
+            const section = document.getElementById('uploaded-pdfs-section');
+            const list = document.getElementById('pdf-list');
+            
+            if (!section || !list) return;
+            
+            if (unitPDFs.length > 0) {
+                list.innerHTML = unitPDFs.map((pdf, index) => `
+                    <div class="pdf-list-item">
+                        <div class="pdf-info">
+                            <i class="fas fa-file-pdf" style="color: #e74c3c;"></i>
+                            <span>${pdf.name} (${formatFileSize(pdf.size)})</span>
+                            <small>${new Date(pdf.uploaded).toLocaleDateString()}</small>
+                        </div>
+                        <div class="pdf-actions">
+                            <button onclick="switchPDF('${unitId}', ${index})" class="btn btn-small">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button onclick="deletePDF('${unitId}', ${index})" class="btn btn-small btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+        
+        // Switch between uploaded PDFs
+        function switchPDF(unitId, index) {
+            const unitPDFs = JSON.parse(localStorage.getItem(`unit_pdfs_${unitId}`) || '[]');
+            if (unitPDFs[index]) {
+                displayUploadedPDF(unitPDFs[index], unitId);
+                showStatusMessage(`Switched to "${unitPDFs[index].name}"`, 'info');
+            }
+        }
+        
+        // Delete PDF from list
+        function deletePDF(unitId, index) {
+            if (!confirm('Are you sure you want to delete this PDF?')) return;
+            
+            const unitPDFs = JSON.parse(localStorage.getItem(`unit_pdfs_${unitId}`) || '[]');
+            if (unitPDFs[index]) {
+                // Clean up blob URL if it exists
+                if (unitPDFs[index].blobUrl) {
+                    URL.revokeObjectURL(unitPDFs[index].blobUrl);
+                }
+                
+                const deletedName = unitPDFs[index].name;
+                unitPDFs.splice(index, 1);
+                localStorage.setItem(`unit_pdfs_${unitId}`, JSON.stringify(unitPDFs));
+                
+                if (unitPDFs.length > 0) {
+                    // Display the most recent PDF
+                    const latestPDF = unitPDFs[unitPDFs.length - 1];
+                    displayUploadedPDF(latestPDF, unitId);
+                } else {
+                    // No uploaded PDFs left, show built-in PDF if available
+                    const unit = unitData[unitId];
+                    if (unit && pdfFiles[unit.pdfName]) {
+                        loadBuiltInPDF(unit.pdfName);
+                    } else {
+                        // No PDFs at all, show upload section
+                        const container = document.getElementById('pdf-viewer-container');
+                        const uploadSection = document.getElementById('pdf-upload-section');
+                        const removeBtn = document.getElementById('remove-pdf-btn');
+                        const downloadBtn = document.getElementById('download-pdf-btn');
+                        const openBtn = document.getElementById('open-pdf-btn');
+                        
+                        if (container) container.innerHTML = `
+                            <div class="pdf-placeholder">
+                                <i class="fas fa-file-pdf"></i>
+                                <h3>No PDF Loaded</h3>
+                                <p>Upload a PDF or load the unit PDF to get started</p>
+                            </div>
+                        `;
+                        if (uploadSection) uploadSection.style.display = 'block';
+                        if (removeBtn) removeBtn.style.display = 'none';
+                        if (downloadBtn) downloadBtn.style.display = 'none';
+                        if (openBtn) openBtn.style.display = 'none';
+                    }
+                }
+                
+                showUploadedPDFs(unitId);
+                showStatusMessage(`Deleted "${deletedName}"`, 'info');
+            }
+        }
+        
+        // Remove current PDF
+        function removeCurrentPDF(unitId) {
+            const unitPDFs = JSON.parse(localStorage.getItem(`unit_pdfs_${unitId}`) || '[]');
+            if (unitPDFs.length > 0 && confirm('Remove current uploaded PDF?')) {
+                deletePDF(unitId, unitPDFs.length - 1);
+            } else {
+                // If no uploaded PDF, just reload built-in PDF
+                const unit = unitData[unitId];
+                if (unit && pdfFiles[unit.pdfName]) {
+                    loadBuiltInPDF(unit.pdfName);
+                }
+            }
+        }
+        
+        // Download current PDF
+        function downloadCurrentPDF(unitId) {
+            const container = document.getElementById('pdf-viewer-container');
+            const iframe = container ? container.querySelector('iframe') : null;
+            
+            if (iframe && iframe.src) {
+                // For uploaded PDFs
+                const link = document.createElement('a');
+                link.href = iframe.src;
+                link.download = 'download.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                // For built-in PDFs
+                const unit = unitData[unitId];
+                if (unit && pdfFiles[unit.pdfName]) {
+                    window.open(`../pdfs/${pdfFiles[unit.pdfName]}`, '_blank');
+                }
+            }
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Show status message
+        function showStatusMessage(message, type) {
+            const status = document.createElement('div');
+            status.className = `status-message ${type}`;
+            status.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                ${message}
+            `;
+            
+            // Remove existing status messages
+            const existingStatus = document.querySelector('.status-message');
+            if (existingStatus) existingStatus.remove();
+            
+            // Add new status message at the top of the PDF section
+            const pdfSection = document.querySelector('.pdf-section');
+            if (pdfSection) {
+                pdfSection.insertBefore(status, pdfSection.firstChild);
+                
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    if (status.parentNode) status.remove();
+                }, 3000);
+            }
+        }
+        
+        // Enhanced Notes Functionality
+        function initializeNotes(unitId) {
+            const notesArea = document.getElementById('unit-notes');
+            if (!notesArea) return;
+            
+            // Load saved notes
+            const savedNotes = localStorage.getItem('notes_' + unitId);
+            if (savedNotes) {
+                notesArea.innerHTML = savedNotes;
+            }
+            
+            // Auto-save notes on input with debouncing
+            let saveTimeout;
+            notesArea.addEventListener('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    saveNotes(unitId);
+                }, 2000);
+            });
+            
+            // Track cursor position for formatting
+            notesArea.addEventListener('mouseup', updateToolbarButtons);
+            notesArea.addEventListener('keyup', updateToolbarButtons);
+            
+            // Add placeholder behavior
+            notesArea.addEventListener('focus', function() {
+                if (this.textContent === this.dataset.placeholder) {
+                    this.innerHTML = '';
+                }
+            });
+            
+            notesArea.addEventListener('blur', function() {
+                if (!this.textContent.trim()) {
+                    this.innerHTML = '';
+                }
+            });
+        }
+        
+        function updateToolbarButtons() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            
+            const range = selection.getRangeAt(0);
+            const parentElement = range.commonAncestorContainer.parentElement;
+            
+            // Update button states based on current selection
+            const boldBtn = document.getElementById('bold-btn');
+            const italicBtn = document.getElementById('italic-btn');
+            const underlineBtn = document.getElementById('underline-btn');
+            const highlightBtn = document.getElementById('highlight-btn');
+            
+            if (boldBtn) boldBtn.classList.toggle('active', document.queryCommandState('bold'));
+            if (italicBtn) italicBtn.classList.toggle('active', document.queryCommandState('italic'));
+            if (underlineBtn) underlineBtn.classList.toggle('active', document.queryCommandState('underline'));
+            
+            // Check for highlight
+            if (highlightBtn && parentElement) {
+                const isHighlighted = parentElement.classList.contains('highlight') || 
+                                     parentElement.style.backgroundColor === 'yellow' ||
+                                     parentElement.style.backgroundColor === 'rgba(255, 255, 0, 0.3)';
+                highlightBtn.classList.toggle('active', isHighlighted);
+            }
+        }
+        
+        function saveNotes(unitId) {
+            const notesArea = document.getElementById('unit-notes');
+            if (notesArea) {
+                const notes = notesArea.innerHTML;
+                localStorage.setItem('notes_' + unitId, notes);
+                
+                // Update last modified timestamp
+                localStorage.setItem('notes_modified_' + unitId, new Date().toISOString());
+            }
+        }
+        
+        function clearNotes(unitId) {
+            if (confirm('Are you sure you want to clear all notes for this unit?')) {
+                localStorage.removeItem('notes_' + unitId);
+                const notesArea = document.getElementById('unit-notes');
+                if (notesArea) {
+                    notesArea.innerHTML = '';
+                }
+                showStatusMessage('Notes cleared successfully.', 'info');
+            }
+        }
+        
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            
+            // Save notes after formatting
+            if (currentUnitId) {
+                saveNotes(currentUnitId);
+                updateToolbarButtons();
+            }
+        }
+        
+        function addHighlight() {
+            const selection = window.getSelection();
+            if (!selection.toString().trim()) {
+                showStatusMessage('Please select some text to highlight.', 'info');
+                return;
+            }
+            
+            // Check if already highlighted
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
+            
+            if (range.surroundContents) {
+                range.surroundContents(span);
+            } else {
+                const contents = range.extractContents();
+                span.appendChild(contents);
+                range.insertNode(span);
+            }
+            
+            // Save notes
+            if (currentUnitId) {
+                saveNotes(currentUnitId);
+                updateToolbarButtons();
+            }
+        }
+        
+        function addEquation() {
+            const equation = prompt('Enter an equation (e.g., E=mc² or F=ma):', 'E=mc²');
+            if (equation) {
+                const notesArea = document.getElementById('unit-notes');
+                if (notesArea) {
+                    const equationHTML = `<span class="equation">${escapeHTML(equation)}</span> `;
+                    
+                    // Insert at cursor position
+                    const selection = window.getSelection();
+                    if (selection.rangeCount) {
+                        const range = selection.getRangeAt(0);
+                        range.deleteContents();
+                        const div = document.createElement('div');
+                        div.innerHTML = equationHTML;
+                        const fragment = document.createDocumentFragment();
+                        let node;
+                        while (node = div.firstChild) {
+                            fragment.appendChild(node);
+                        }
+                        range.insertNode(fragment);
+                    } else {
+                        // Insert at end if no selection
+                        notesArea.innerHTML += equationHTML;
+                    }
+                    
+                    // Save notes
+                    if (currentUnitId) {
+                        saveNotes(currentUnitId);
+                    }
+                }
+            }
+        }
+        
+        function insertPageReference() {
+            const page = prompt('Enter page number:', '');
+            if (page) {
+                const notesArea = document.getElementById('unit-notes');
+                if (notesArea) {
+                    const refHTML = `<span class="page-ref" style="background: #e3f2fd; padding: 2px 6px; border-radius: 3px; font-size: 0.9em;">📖 p.${page}</span> `;
+                    
+                    // Insert at cursor position
+                    const selection = window.getSelection();
+                    if (selection.rangeCount) {
+                        const range = selection.getRangeAt(0);
+                        range.deleteContents();
+                        const div = document.createElement('div');
+                        div.innerHTML = refHTML;
+                        const fragment = document.createDocumentFragment();
+                        let node;
+                        while (node = div.firstChild) {
+                            fragment.appendChild(node);
+                        }
+                        range.insertNode(fragment);
+                    } else {
+                        notesArea.innerHTML += refHTML;
+                    }
+                    
+                    if (currentUnitId) {
+                        saveNotes(currentUnitId);
+                    }
+                }
+            }
+        }
+        
+        function formatAllEquations() {
+            const notesArea = document.getElementById('unit-notes');
+            if (!notesArea) return;
+            
+            // Simple equation formatting - wrap recognized patterns
+            let content = notesArea.innerHTML;
+            
+            // Find and format common equations
+            const equationPatterns = [
+                { pattern: /([EFVPI])\s*=\s*([^<\s]+)/g, replace: '<span class="equation">$1 = $2</span>' },
+                { pattern: /([abcxyz])\s*=\s*([^<\s]+)/g, replace: '<span class="equation">$1 = $2</span>' },
+                { pattern: /Δ([A-Za-z])\s*=\s*([^<\s]+)/g, replace: '<span class="equation">Δ$1 = $2</span>' },
+            ];
+            
+            equationPatterns.forEach(pattern => {
+                content = content.replace(pattern.pattern, pattern.replace);
+            });
+            
+            notesArea.innerHTML = content;
+            if (currentUnitId) saveNotes(currentUnitId);
+            showStatusMessage('Equations formatted.', 'info');
+        }
+        
+        // Progress tracking
+        function markAsStudied(unitId) {
+            saveProgress(unitId, 100);
+            updateProgressCircle(unitId);
+            showStatusMessage('Unit marked as studied!', 'success');
+        }
+        
+        function updateProgress(unitId, amount) {
+            const currentProgress = parseInt(localStorage.getItem('progress_' + unitId) || '0');
+            const newProgress = Math.min(currentProgress + amount, 100);
+            saveProgress(unitId, newProgress);
+            updateProgressCircle(unitId);
+            showStatusMessage(`Progress increased to ${newProgress}%`, 'info');
+        }
+        
+        function saveProgress(unitId, progress) {
+            localStorage.setItem('progress_' + unitId, progress.toString());
+        }
+        
+        function updateProgressCircle(unitId) {
+            const progress = parseInt(localStorage.getItem('progress_' + unitId) || '0');
+            const circle = document.getElementById(unitId + '-progress-circle');
+            if (circle) {
+                // Create conic gradient for progress circle
+                const angle = (progress / 100) * 360;
+                circle.style.background = `
+                    conic-gradient(
+                        var(--primary) 0deg ${angle}deg,
+                        var(--light-gray) ${angle}deg 360deg
+                    )
+                `;
+                circle.querySelector('span').textContent = progress + '%';
+            }
+        }
+        
+        function exportNotes(unitId) {
+            const notes = localStorage.getItem('notes_' + unitId) || '';
+            const unit = unitData[unitId];
+            
+            if (!notes.trim()) {
+                showStatusMessage('No notes to export for this unit.', 'info');
+                return;
+            }
+            
+            const exportHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${unit.title} - Notes</title>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body { 
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                            padding: 40px; 
+                            max-width: 800px;
+                            margin: 0 auto;
+                            line-height: 1.6;
+                            color: #333;
+                        }
+                        .header { 
+                            border-bottom: 3px solid ${unit.color}; 
+                            padding-bottom: 20px; 
+                            margin-bottom: 30px; 
+                        }
+                        .header h1 {
+                            color: ${unit.color};
+                            margin: 0 0 10px 0;
+                        }
+                        .date { 
+                            color: #888; 
+                            font-size: 14px; 
+                            font-style: italic;
+                        }
+                        .equation { 
+                            background: #f5f5f5; 
+                            padding: 4px 8px; 
+                            border-radius: 4px; 
+                            font-family: 'Courier New', monospace;
+                            border: 1px solid #ddd;
+                            display: inline-block;
+                            margin: 2px;
+                        }
+                        .highlight { 
+                            background-color: rgba(255, 255, 0, 0.3); 
+                            padding: 2px 0;
+                            border-radius: 2px;
+                        }
+                        .notes-content {
+                            margin-top: 30px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${unit.title} - Notes</h1>
+                        <p class="date">Exported on ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    <div class="notes-content">${notes}</div>
+                </body>
+                </html>
+            `;
+            
+            const blob = new Blob([exportHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${unit.id}-notes.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatusMessage('Notes exported successfully!', 'success');
+        }
+        
+        function showError(message) {
+            document.getElementById('unit-content').innerHTML = `
+                <div style="text-align: center; padding: 50px;">
+                    <i class="fas fa-exclamation-triangle fa-3x" style="color: #e74c3c;"></i>
+                    <h2>Error</h2>
+                    <p>${message}</p>
+                    <a href="../index.html" class="btn">Return to Home</a>
+                </div>
+            `;
+        }
+        
+        // Clean up blob URLs when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (window.pdfBlobUrls) {
+                Object.values(window.pdfBlobUrls).forEach(url => {
+                    URL.revokeObjectURL(url);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
