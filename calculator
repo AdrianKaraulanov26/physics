@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Calculator - AP Physics 2</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/tools-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.desmos.com/api/v1.7/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-atom"></i>
+            <span>AP Physics 2 Hub</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="../tools/calculator.html" class="active"><i class="fas fa-calculator"></i> Calculator</a></li>
+            <li><a href="../tools/timer.html"><i class="fas fa-stopwatch"></i> Timer</a></li>
+            <li><a href="../tools/whiteboard.html"><i class="fas fa-draw-polygon"></i> Whiteboard</a></li>
+            <li><a href="../tools/practice.html"><i class="fas fa-clipboard-list"></i> Practice</a></li>
+        </ul>
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1><i class="fas fa-calculator"></i> Physics Calculator</h1>
+        <p class="subtitle">Interactive calculator for AP Physics 2 calculations and graphing</p>
+
+        <div class="tools-grid">
+            <!-- Desmos Graphing Calculator -->
+            <section class="tool-section">
+                <h2><i class="fas fa-chart-line"></i> Graphing Calculator</h2>
+                <div id="desmos-calc" style="width: 100%; height: 400px;"></div>
+                <div class="calculator-controls">
+                    <button onclick="clearGraph()" class="btn">Clear Graph</button>
+                    <button onclick="saveGraph()" class="btn">Save Graph</button>
+                    <button onclick="loadSample('circuit')" class="btn">Circuit Analysis</button>
+                    <button onclick="loadSample('motion')" class="btn">Motion Graph</button>
+                </div>
+            </section>
+
+            <!-- Quick Physics Calculators -->
+            <section class="tool-section">
+                <h2><i class="fas fa-bolt"></i> Quick Physics Calculators</h2>
+                
+                <div class="calculator-tabs">
+                    <button class="tab-btn active" onclick="openTab(event, 'thermo')">Thermodynamics</button>
+                    <button class="tab-btn" onclick="openTab(event, 'circuit')">Circuits</button>
+                    <button class="tab-btn" onclick="openTab(event, 'optics')">Optics</button>
+                    <button class="tab-btn" onclick="openTab(event, 'modern')">Modern</button>
+                </div>
+
+                <!-- Thermodynamics Calculator -->
+                <div id="thermo" class="tab-content active">
+                    <div class="calc-form">
+                        <h3>First Law: ΔU = Q - W</h3>
+                        <div class="input-group">
+                            <label>Heat Added (Q) in J:</label>
+                            <input type="number" id="heatInput" placeholder="Enter Q">
+                        </div>
+                        <div class="input-group">
+                            <label>Work Done (W) in J:</label>
+                            <input type="number" id="workInput" placeholder="Enter W">
+                        </div>
+                        <button onclick="calculateFirstLaw()" class="btn">Calculate ΔU</button>
+                        <div class="result">
+                            <h4>Change in Internal Energy:</h4>
+                            <p id="firstLawResult">-- J</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit Calculator -->
+                <div id="circuit" class="tab-content">
+                    <div class="calc-form">
+                        <h3>Ohm's Law: V = IR</h3>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Voltage (V):</label>
+                                <input type="number" id="voltageInput" placeholder="Volts">
+                            </div>
+                            <div class="input-group">
+                                <label>Current (I):</label>
+                                <input type="number" id="currentInput" placeholder="Amps">
+                            </div>
+                            <div class="input-group">
+                                <label>Resistance (R):</label>
+                                <input type="number" id="resistanceInput" placeholder="Ohms">
+                            </div>
+                        </div>
+                        <button onclick="calculateOhmsLaw()" class="btn">Calculate</button>
+                        <div class="result">
+                            <h4>Ohm's Law Results:</h4>
+                            <p id="ohmsLawResult">Enter any two values</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optics Calculator -->
+                <div id="optics" class="tab-content">
+                    <div class="calc-form">
+                        <h3>Lens Equation: 1/f = 1/d₀ + 1/dᵢ</h3>
+                        <div class="input-group">
+                            <label>Focal Length (f) in m:</label>
+                            <input type="number" id="focalInput" placeholder="Enter f">
+                        </div>
+                        <div class="input-group">
+                            <label>Object Distance (d₀) in m:</label>
+                            <input type="number" id="objectDistInput" placeholder="Enter d₀">
+                        </div>
+                        <div class="input-group">
+                            <label>Image Distance (dᵢ) in m:</label>
+                            <input type="number" id="imageDistInput" placeholder="Enter dᵢ">
+                        </div>
+                        <button onclick="calculateLensEquation()" class="btn">Calculate</button>
+                        <div class="result">
+                            <h4>Lens Equation Result:</h4>
+                            <p id="lensEquationResult">-- m</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modern Physics Calculator -->
+                <div id="modern" class="tab-content">
+                    <div class="calc-form">
+                        <h3>Energy of Photon: E = hf</h3>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Frequency (f) in Hz:</label>
+                                <input type="number" id="frequencyInput" placeholder="Enter f">
+                            </div>
+                            <div class="input-group">
+                                <label>Wavelength (λ) in m:</label>
+                                <input type="number" id="wavelengthInput" placeholder="Enter λ">
+                            </div>
+                        </div>
+                        <button onclick="calculatePhotonEnergy()" class="btn">Calculate Energy</button>
+                        <div class="result">
+                            <h4>Photon Energy:</h4>
+                            <p id="photonEnergyResult">-- J</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Saved Calculations -->
+            <section class="tool-section">
+                <h2><i class="fas fa-save"></i> Saved Calculations</h2>
+                <div id="savedCalculations" class="saved-list">
+                    <p>Your saved calculations will appear here.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="../script.js"></script>
+    <script>
+        // Initialize Desmos Calculator
+        var elt = document.getElementById('desmos-calc');
+        var calculator = Desmos.GraphingCalculator(elt, {
+            keypad: true,
+            expressions: true,
+            settingsMenu: true,
+            zoomButtons: true,
+            expressionsTopbar: true,
+            backgroundColor: '#f8f9fa'
+        });
+
+        // Set initial viewport
+        calculator.setMathBounds({
+            left: -10,
+            right: 10,
+            bottom: -10,
+            top: 10
+        });
+
+        // Tab functionality
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tabbuttons = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Calculator Functions
+        function calculateFirstLaw() {
+            const Q = parseFloat(document.getElementById('heatInput').value);
+            const W = parseFloat(document.getElementById('workInput').value);
+            
+            if (!isNaN(Q) && !isNaN(W)) {
+                const deltaU = Q - W;
+                document.getElementById('firstLawResult').textContent = `${deltaU.toFixed(2)} J`;
+                saveCalculation(`ΔU = ${Q} - ${W} = ${deltaU.toFixed(2)} J`, 'thermo');
+            } else {
+                document.getElementById('firstLawResult').textContent = "Please enter valid numbers";
+            }
+        }
+
+        function calculateOhmsLaw() {
+            const V = parseFloat(document.getElementById('voltageInput').value);
+            const I = parseFloat(document.getElementById('currentInput').value);
+            const R = parseFloat(document.getElementById('resistanceInput').value);
+            
+            let result = "";
+            
+            if (!isNaN(V) && !isNaN(I) && isNaN(R)) {
+                const calculatedR = V / I;
+                result = `R = V/I = ${V}/${I} = ${calculatedR.toFixed(2)} Ω`;
+                document.getElementById('resistanceInput').value = calculatedR.toFixed(2);
+            } else if (!isNaN(V) && isNaN(I) && !isNaN(R)) {
+                const calculatedI = V / R;
+                result = `I = V/R = ${V}/${R} = ${calculatedI.toFixed(2)} A`;
+                document.getElementById('currentInput').value = calculatedI.toFixed(2);
+            } else if (isNaN(V) && !isNaN(I) && !isNaN(R)) {
+                const calculatedV = I * R;
+                result = `V = I×R = ${I}×${R} = ${calculatedV.toFixed(2)} V`;
+                document.getElementById('voltageInput').value = calculatedV.toFixed(2);
+            } else {
+                result = "Enter exactly two values";
+            }
+            
+            document.getElementById('ohmsLawResult').textContent = result;
+            if (result.includes("=")) {
+                saveCalculation(result, 'circuit');
+            }
+        }
+
+        function calculateLensEquation() {
+            const f = parseFloat(document.getElementById('focalInput').value);
+            const doValue = parseFloat(document.getElementById('objectDistInput').value);
+            const di = parseFloat(document.getElementById('imageDistInput').value);
+            
+            if (!isNaN(f) && !isNaN(doValue) && isNaN(di)) {
+                const calculatedDi = 1 / (1/f - 1/doValue);
+                const result = `dᵢ = 1/(1/${f} - 1/${doValue}) = ${calculatedDi.toFixed(2)} m`;
+                document.getElementById('lensEquationResult').textContent = result;
+                document.getElementById('imageDistInput').value = calculatedDi.toFixed(2);
+                saveCalculation(result, 'optics');
+            } else if (!isNaN(f) && isNaN(doValue) && !isNaN(di)) {
+                const calculatedDo = 1 / (1/f - 1/di);
+                const result = `d₀ = 1/(1/${f} - 1/${di}) = ${calculatedDo.toFixed(2)} m`;
+                document.getElementById('lensEquationResult').textContent = result;
+                document.getElementById('objectDistInput').value = calculatedDo.toFixed(2);
+                saveCalculation(result, 'optics');
+            } else if (isNaN(f) && !isNaN(doValue) && !isNaN(di)) {
+                const calculatedF = 1 / (1/doValue + 1/di);
+                const result = `f = 1/(1/${doValue} + 1/${di}) = ${calculatedF.toFixed(2)} m`;
+                document.getElementById('lensEquationResult').textContent = result;
+                document.getElementById('focalInput').value = calculatedF.toFixed(2);
+                saveCalculation(result, 'optics');
+            } else {
+                document.getElementById('lensEquationResult').textContent = "Enter exactly two values";
+            }
+        }
+
+        function calculatePhotonEnergy() {
+            const f = parseFloat(document.getElementById('frequencyInput').value);
+            const lambda = parseFloat(document.getElementById('wavelengthInput').value);
+            const h = 6.626e-34; // Planck's constant
+            const c = 3e8; // Speed of light
+            
+            let frequency = f;
+            
+            if (!isNaN(f)) {
+                frequency = f;
+            } else if (!isNaN(lambda)) {
+                frequency = c / lambda;
+                document.getElementById('frequencyInput').value = frequency.toExponential(2);
+            } else {
+                document.getElementById('photonEnergyResult').textContent = "Enter frequency or wavelength";
+                return;
+            }
+            
+            const E = h * frequency;
+            document.getElementById('photonEnergyResult').textContent = 
+                `${E.toExponential(2)} J or ${(E / 1.602e-19).toFixed(2)} eV`;
+            saveCalculation(`E = hf = (6.626e-34) × (${frequency.toExponential(2)}) = ${E.toExponential(2)} J`, 'modern');
+        }
+
+        // Save calculation to localStorage
+        function saveCalculation(calculation, type) {
+            let saved = JSON.parse(localStorage.getItem('savedCalculations') || '[]');
+            saved.unshift({
+                calculation: calculation,
+                type: type,
+                timestamp: new Date().toLocaleString()
+            });
+            
+            // Keep only last 20 calculations
+            saved = saved.slice(0, 20);
+            
+            localStorage.setItem('savedCalculations', JSON.stringify(saved));
+            displaySavedCalculations();
+        }
+
+        // Display saved calculations
+        function displaySavedCalculations() {
+            const saved = JSON.parse(localStorage.getItem('savedCalculations') || '[]');
+            const container = document.getElementById('savedCalculations');
+            
+            if (saved.length === 0) {
+                container.innerHTML = '<p>No saved calculations yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = saved.map(item => `
+                <div class="saved-item">
+                    <div class="saved-header">
+                        <span class="calc-type ${item.type}">${item.type.toUpperCase()}</span>
+                        <span class="calc-time">${item.timestamp}</span>
+                    </div>
+                    <div class="calc-content">${item.calculation}</div>
+                </div>
+            `).join('');
+        }
+
+        // Graph functions
+        function clearGraph() {
+            calculator.setBlank();
+        }
+
+        function saveGraph() {
+            const image = calculator.screenshot({
+                width: 800,
+                height: 600,
+                targetPixelRatio: 2
+            });
+            
+            const link = document.createElement('a');
+            link.download = 'physics-graph.png';
+            link.href = image;
+            link.click();
+        }
+
+        function loadSample(type) {
+            if (type === 'circuit') {
+                calculator.setExpression({id: 'graph1', latex: 'y = \\frac{10}{x}'});
+                calculator.setExpression({id: 'graph2', latex: 'y = 5'});
+            } else if (type === 'motion') {
+                calculator.setExpression({id: 'graph1', latex: 'y = 5\\sin\\left(x\\right)'});
+                calculator.setExpression({id: 'graph2', latex: 'y = 5\\cos\\left(x\\right)'});
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            displaySavedCalculations();
+        });
+    </script>
+</body>
+</html>
