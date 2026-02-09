@@ -1,0 +1,440 @@
+// unit-template.js - Dynamic Unit Page Generator
+const unitData = {
+    unit9: {
+        id: 'unit9',
+        title: 'Thermodynamics',
+        subtitle: 'First & Second Laws of Thermodynamics, Heat Engines, PV Diagrams, Entropy',
+        icon: 'fa-fire',
+        color: '#e74c3c',
+        pdfName: 'Physics_2_Thermodynamics',
+        formulas: [
+            { title: 'First Law of Thermodynamics', formula: 'ΔU = Q - W', description: 'Change in internal energy equals heat added minus work done' },
+            { title: 'Ideal Gas Law', formula: 'PV = nRT', description: 'Pressure × Volume = moles × gas constant × temperature' },
+            { title: 'Efficiency of Heat Engine', formula: 'η = 1 - Q<sub>c</sub>/Q<sub>h</sub>', description: 'Efficiency equals 1 minus cold reservoir heat over hot reservoir heat' },
+            { title: 'Entropy Change', formula: 'ΔS = Q/T', description: 'Entropy change equals heat transfer divided by temperature' }
+        ],
+        videos: [
+            { title: 'Internal Energy & First Law', url: 'https://www.youtube.com/embed/ZGiK1_KvJoM', source: 'Khan Academy - AP Physics 2' },
+            { title: 'PV Diagrams & Thermodynamics', url: 'https://www.youtube.com/embed/4S1kKRX6RKI', source: 'Bozeman Science' }
+        ],
+        practiceLinks: [
+            { icon: 'fa-file-alt', title: 'Free Response Questions', description: 'Official College Board FRQs', href: '../tools/practice.html?unit=9&type=frq' },
+            { icon: 'fa-list-ol', title: 'Multiple Choice', description: 'Practice questions with explanations', href: '../tools/practice.html?unit=9&type=mc' },
+            { icon: 'fa-flask', title: 'PhET Simulation', description: 'Gas Properties Interactive Lab', href: 'https://phet.colorado.edu/sims/html/gas-properties/latest/gas-properties_en.html', target: '_blank' }
+        ],
+        quickLinks: [
+            { icon: 'fa-layer-group', text: 'Unit 9 Flashcards', href: '../flashcards.html?unit=9' },
+            { icon: 'fa-draw-polygon', text: 'Draw PV Diagrams', href: '../tools/whiteboard.html?type=pv-diagram' },
+            { icon: 'fa-calculator', text: 'Thermo Calculator', href: '../tools/calculator.html?formula=thermo' },
+            { icon: 'fa-stopwatch', text: '25-min Study Timer', href: '../tools/timer.html?duration=25' }
+        ]
+    },
+    unit10: {
+        id: 'unit10',
+        title: 'Electric Force & Field',
+        subtitle: 'Coulomb\'s Law, Electric Field Lines, Electric Potential, Capacitance',
+        icon: 'fa-bolt',
+        color: '#3498db',
+        pdfName: 'Physics_2_Electric_Forces_Fields',
+        formulas: [
+            { title: 'Coulomb\'s Law', formula: 'F = k|q₁q₂|/r²', description: 'Force between charges equals constant times product of charges divided by distance squared' },
+            { title: 'Electric Field', formula: 'E = F/q', description: 'Electric field equals force per unit charge' },
+            { title: 'Electric Potential Energy', formula: 'U = kq₁q₂/r', description: 'Potential energy equals constant times product of charges divided by distance' },
+            { title: 'Capacitance', formula: 'C = Q/V', description: 'Capacitance equals charge divided by voltage' }
+        ],
+        videos: [
+            { title: 'Electric Fields & Forces', url: 'https://www.youtube.com/embed/kkSvMIZexWs', source: 'Khan Academy' },
+            { title: 'Electric Potential & Voltage', url: 'https://www.youtube.com/embed/LzKMQByFSLc', source: 'Bozeman Science' }
+        ],
+        practiceLinks: [
+            { icon: 'fa-file-alt', title: 'Free Response Questions', description: 'Official College Board FRQs', href: '../tools/practice.html?unit=10&type=frq' },
+            { icon: 'fa-list-ol', title: 'Multiple Choice', description: 'Practice questions with explanations', href: '../tools/practice.html?unit=10&type=mc' },
+            { icon: 'fa-flask', title: 'PhET Simulation', description: 'Charges and Fields', href: 'https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_en.html', target: '_blank' }
+        ],
+        quickLinks: [
+            { icon: 'fa-layer-group', text: 'Unit 10 Flashcards', href: '../flashcards.html?unit=10' },
+            { icon: 'fa-draw-polygon', text: 'Draw Field Lines', href: '../tools/whiteboard.html?type=field' },
+            { icon: 'fa-calculator', text: 'Electric Calculator', href: '../tools/calculator.html?formula=electric' },
+            { icon: 'fa-stopwatch', text: '30-min Study Timer', href: '../tools/timer.html?duration=30' }
+        ]
+    },
+    unit11: {
+        id: 'unit11',
+        title: 'Electric Circuits',
+        subtitle: 'Ohm\'s Law, Series/Parallel Circuits, Capacitors, RC Circuits',
+        icon: 'fa-bolt',
+        color: '#2ecc71',
+        pdfName: 'Physics_2_Circuits',
+        formulas: [
+            { title: 'Ohm\'s Law', formula: 'V = IR', description: 'Voltage equals current times resistance' },
+            { title: 'Power in Circuits', formula: 'P = IV = I²R = V²/R', description: 'Power equals current times voltage' },
+            { title: 'Resistors in Series', formula: 'R<sub>total</sub> = R₁ + R₂ + ...', description: 'Total resistance equals sum of individual resistances' },
+            { title: 'Resistors in Parallel', formula: '1/R<sub>total</sub> = 1/R₁ + 1/R₂ + ...', description: 'Reciprocal of total resistance equals sum of reciprocals' }
+        ],
+        videos: [
+            { title: 'Circuit Analysis Basics', url: 'https://www.youtube.com/embed/Zl90tZYV_1s', source: 'Khan Academy' },
+            { title: 'RC Circuits', url: 'https://www.youtube.com/embed/PLQrPqYlPmI', source: 'Bozeman Science' }
+        ],
+        practiceLinks: [
+            { icon: 'fa-file-alt', title: 'Free Response Questions', description: 'Official College Board FRQs', href: '../tools/practice.html?unit=11&type=frq' },
+            { icon: 'fa-list-ol', title: 'Multiple Choice', description: 'Practice questions with explanations', href: '../tools/practice.html?unit=11&type=mc' },
+            { icon: 'fa-flask', title: 'PhET Simulation', description: 'Circuit Construction Kit', href: 'https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_en.html', target: '_blank' }
+        ],
+        quickLinks: [
+            { icon: 'fa-layer-group', text: 'Unit 11 Flashcards', href: '../flashcards.html?unit=11' },
+            { icon: 'fa-draw-polygon', text: 'Draw Circuits', href: '../tools/whiteboard.html?type=circuit' },
+            { icon: 'fa-calculator', text: 'Circuit Calculator', href: '../tools/calculator.html?formula=circuit' },
+            { icon: 'fa-stopwatch', text: '35-min Study Timer', href: '../tools/timer.html?duration=35' }
+        ]
+    },
+    unit12: {
+        id: 'unit12',
+        title: 'Magnetism & Electromagnetism',
+        subtitle: 'Magnetic Fields, Faraday\'s Law, Lenz\'s Law, Inductors',
+        icon: 'fa-magnet',
+        color: '#9b59b6',
+        pdfName: 'Physics_2_Magnetism',
+        formulas: [
+            { title: 'Magnetic Force on Charge', formula: 'F = qvB sinθ', description: 'Force equals charge times velocity times magnetic field times sine of angle' },
+            { title: 'Magnetic Force on Wire', formula: 'F = ILB sinθ', description: 'Force equals current times length times magnetic field times sine of angle' },
+            { title: 'Faraday\'s Law', formula: 'ε = -N(ΔΦ/Δt)', description: 'Induced emf equals negative turns times rate of change of flux' },
+            { title: 'Magnetic Flux', formula: 'Φ = BA cosθ', description: 'Flux equals magnetic field times area times cosine of angle' }
+        ],
+        videos: [
+            { title: 'Magnetic Forces', url: 'https://www.youtube.com/embed/LeA_4bHXmoQ', source: 'Khan Academy' },
+            { title: 'Electromagnetic Induction', url: 'https://www.youtube.com/embed/7pt8K5D8p9g', source: 'Bozeman Science' }
+        ],
+        practiceLinks: [
+            { icon: 'fa-file-alt', title: 'Free Response Questions', description: 'Official College Board FRQs', href: '../tools/practice.html?unit=12&type=frq' },
+            { icon: 'fa-list-ol', title: 'Multiple Choice', description: 'Practice questions with explanations', href: '../tools/practice.html?unit=12&type=mc' },
+            { icon: 'fa-flask', title: 'PhET Simulation', description: 'Faraday\'s Law', href: 'https://phet.colorado.edu/sims/html/faradays-law/latest/faradays-law_en.html', target: '_blank' }
+        ],
+        quickLinks: [
+            { icon: 'fa-layer-group', text: 'Unit 12 Flashcards', href: '../flashcards.html?unit=12' },
+            { icon: 'fa-draw-polygon', text: 'Draw Magnetic Fields', href: '../tools/whiteboard.html?type=magnet' },
+            { icon: 'fa-calculator', text: 'Magnetism Calculator', href: '../tools/calculator.html?formula=magnet' },
+            { icon: 'fa-stopwatch', text: '30-min Study Timer', href: '../tools/timer.html?duration=30' }
+        ]
+    },
+    unit13: {
+        id: 'unit13',
+        title: 'Geometric Optics',
+        subtitle: 'Reflection, Refraction, Lenses, Mirrors, Optics Equations',
+        icon: 'fa-eye',
+        color: '#1abc9c',
+        pdfName: 'Physics_2_Optics',
+        formulas: [
+            { title: 'Snell\'s Law', formula: 'n₁ sinθ₁ = n₂ sinθ₂', description: 'Refractive index times sine of angle is constant' },
+            { title: 'Lens Equation', formula: '1/f = 1/d<sub>o</sub> + 1/d<sub>i</sub>', description: 'Reciprocal of focal length equals sum of reciprocals of object and image distances' },
+            { title: 'Magnification', formula: 'm = -d<sub>i</sub>/d<sub>o</sub> = h<sub>i</sub>/h<sub>o</sub>', description: 'Magnification equals negative image distance over object distance' },
+            { title: 'Critical Angle', formula: 'θ<sub>c</sub> = sin⁻¹(n₂/n₁)', description: 'Critical angle equals arcsine of ratio of refractive indices' }
+        ],
+        videos: [
+            { title: 'Refraction & Snell\'s Law', url: 'https://www.youtube.com/embed/wCGt6W7_S4Y', source: 'Khan Academy' },
+            { title: 'Thin Lens Equation', url: 'https://www.youtube.com/embed/3iLPg7twO6Q', source: 'Bozeman Science' }
+        ],
+        practiceLinks: [
+            { icon: 'fa-file-alt', title: 'Free Response Questions', description: 'Official College Board FRQs', href: '../tools/practice.html?unit=13&type=frq' },
+            { icon: 'fa-list-ol', title: 'Multiple Choice', description: 'Practice questions with explanations', href: '../tools/practice.html?unit=13&type=mc' },
+            { icon: 'fa-flask', title: 'PhET Simulation', description: 'Geometric Optics', href: 'https://phet.colorado.edu/sims/html/geometric-optics/latest/geometric-optics_en.html', target: '_blank' }
+        ],
+        quickLinks: [
+            { icon: 'fa-layer-group', text: 'Unit 13 Flashcards', href: '../flashcards.html?unit=13' },
+            { icon: 'fa-draw-polygon', text: 'Draw Ray Diagrams', href: '../tools/whiteboard.html?type=lens' },
+            { icon: 'fa-calculator', text: 'Optics Calculator', href: '../tools/calculator.html?formula=optics' },
+            { icon: 'fa-stopwatch', text: '25-min Study Timer', href: '../tools/timer.html?duration=25' }
+        ]
+    },
+    unit14: {
+        id: 'unit14',
+        title: 'Waves & Physical Optics',
+        subtitle: 'Wave Basics, Sound Properties, Interference, Diffraction, Polarization',
+        icon: 'fa-wave-square',
+        color: '#f39c12',
+        pdfName: 'Physics_2_Waves',
+        formulas: [
+            { title: 'Wave Equation', formula: 'v = fλ', description: 'Velocity equals frequency times wavelength' },
+            { title: 'Double Slit Interference', formula: 'd sinθ = mλ', description: 'Path difference equals integer times wavelength for constructive interference' },
+            { title: 'Beat Frequency', formula: 'f<sub>beat</sub> = |f₁ - f₂|', description: 'Beat frequency equals absolute difference between frequencies' },
+            { title: 'Doppler Effect', formula: 'f\' = f(v ± v<sub>o</sub>)/(v ∓ v<sub>s</sub>)', description: 'Observed frequency depends on relative motion' }
+        ],
+        videos: [
+            { title: 'Wave Interference', url: 'https://www.youtube.com/embed/0uv_6LcM218', source: 'Khan Academy' },
+            { title: 'Sound & Doppler Effect', url: 'https://www.youtube.com/embed/gWGLACy7-FE', source: 'Bozeman Science' }
+        ],
+        practiceLinks: [
+            { icon: 'fa-file-alt', title: 'Free Response Questions', description: 'Official College Board FRQs', href: '../tools/practice.html?unit=14&type=frq' },
+            { icon: 'fa-list-ol', title: 'Multiple Choice', description: 'Practice questions with explanations', href: '../tools/practice.html?unit=14&type=mc' },
+            { icon: 'fa-flask', title: 'PhET Simulation', description: 'Wave Interference', href: 'https://phet.colorado.edu/sims/html/wave-interference/latest/wave-interference_en.html', target: '_blank' }
+        ],
+        quickLinks: [
+            { icon: 'fa-layer-group', text: 'Unit 14 Flashcards', href: '../flashcards.html?unit=14' },
+            { icon: 'fa-draw-polygon', text: 'Draw Wave Diagrams', href: '../tools/whiteboard.html?type=wave' },
+            { icon: 'fa-calculator', text: 'Wave Calculator', href: '../tools/calculator.html?formula=wave' },
+            { icon: 'fa-stopwatch', text: '40-min Study Timer', href: '../tools/timer.html?duration=40' }
+        ]
+    },
+    unit15: {
+        id: 'unit15',
+        title: 'Modern Physics',
+        subtitle: 'Photoelectric Effect, Atomic Models, Nuclear Physics, Quantum Mechanics',
+        icon: 'fa-atom',
+        color: '#34495e',
+        pdfName: 'Physics_2_Modern_Physics',
+        formulas: [
+            { title: 'Photoelectric Effect', formula: 'E = hf = hc/λ', description: 'Energy equals Planck\'s constant times frequency' },
+            { title: 'De Broglie Wavelength', formula: 'λ = h/p', description: 'Wavelength equals Planck\'s constant divided by momentum' },
+            { title: 'Energy-Mass Equivalence', formula: 'E = mc²', description: 'Energy equals mass times speed of light squared' },
+            { title: 'Radioactive Decay', formula: 'N = N₀e⁻ᵏᵗ', description: 'Number of nuclei decreases exponentially with time' }
+        ],
+        videos: [
+            { title: 'Photoelectric Effect', url: 'https://www.youtube.com/embed/vee6cCqZJ-8', source: 'Khan Academy' },
+            { title: 'Quantum Mechanics', url: 'https://www.youtube.com/embed/MtVZb2yW1eo', source: 'Bozeman Science' }
+        ],
+        practiceLinks: [
+            { icon: 'fa-file-alt', title: 'Free Response Questions', description: 'Official College Board FRQs', href: '../tools/practice.html?unit=15&type=frq' },
+            { icon: 'fa-list-ol', title: 'Multiple Choice', description: 'Practice questions with explanations', href: '../tools/practice.html?unit=15&type=mc' },
+            { icon: 'fa-flask', title: 'PhET Simulation', description: 'Photoelectric Effect', href: 'https://phet.colorado.edu/sims/html/photoelectric/latest/photoelectric_en.html', target: '_blank' }
+        ],
+        quickLinks: [
+            { icon: 'fa-layer-group', text: 'Unit 15 Flashcards', href: '../flashcards.html?unit=15' },
+            { icon: 'fa-draw-polygon', text: 'Draw Energy Levels', href: '../tools/whiteboard.html?type=atom' },
+            { icon: 'fa-calculator', text: 'Modern Physics Calculator', href: '../tools/calculator.html?formula=modern' },
+            { icon: 'fa-stopwatch', text: '45-min Study Timer', href: '../tools/timer.html?duration=45' }
+        ]
+    }
+};
+
+// Generate unit page HTML
+function generateUnitPage(unitId) {
+    const unit = unitData[unitId];
+    if (!unit) return '';
+    
+    const isActiveUnit = window.location.pathname.includes(unitId + '.html');
+    
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${unit.title} - AP Physics 2</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/unit-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-atom"></i>
+            <span>AP Physics 2 Hub</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li class="dropdown">
+                <a href="#"><i class="fas fa-book"></i> Units <i class="fas fa-chevron-down"></i></a>
+                <div class="dropdown-content">
+                    ${Object.values(unitData).map(u => `
+                        <a href="${u.id}.html" ${u.id === unitId ? 'class="active"' : ''}>
+                            ${u.title}
+                        </a>
+                    `).join('')}
+                </div>
+            </li>
+            <li><a href="../flashcards.html"><i class="fas fa-layer-group"></i> Flashcards</a></li>
+            <li><a href="../tools/whiteboard.html"><i class="fas fa-draw-polygon"></i> Diagrams</a></li>
+            <li><a href="../tools/practice.html"><i class="fas fa-clipboard-list"></i> Practice</a></li>
+            <li><a href="../tools/calculator.html"><i class="fas fa-calculator"></i> Calculator</a></li>
+        </ul>
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <main class="container unit-container">
+        <header class="unit-header">
+            <div class="unit-title">
+                <div class="unit-icon-large" style="background-color: ${unit.color};">
+                    <i class="fas ${unit.icon}"></i>
+                </div>
+                <div>
+                    <h1>${unit.title}</h1>
+                    <p class="unit-subtitle">${unit.subtitle}</p>
+                </div>
+            </div>
+            <div class="unit-actions">
+                <button onclick="markAsStudied('${unit.id}')" class="btn btn-success">
+                    <i class="fas fa-check-circle"></i> Mark as Studied
+                </button>
+                <button onclick="exportNotes('${unit.id}')" class="btn">
+                    <i class="fas fa-download"></i> Export Notes
+                </button>
+            </div>
+        </header>
+
+        <div class="unit-grid">
+            <div class="unit-content">
+                <section class="content-section">
+                    <h2><i class="fas fa-file-pdf"></i> Textbook Content</h2>
+                    <div id="pdf-container" class="pdf-container">
+                        <!-- PDF will be loaded here -->
+                    </div>
+                    <div class="pdf-controls">
+                        <button onclick="loadPDF('${unit.pdfName}', 'pdf-container')" class="btn">
+                            <i class="fas fa-book-open"></i> Load PDF
+                        </button>
+                        <button onclick="openPDF('${unit.pdfName}')" class="btn">
+                            <i class="fas fa-external-link-alt"></i> Open Full Screen
+                        </button>
+                    </div>
+                </section>
+
+                <section class="content-section">
+                    <h2><i class="fas fa-calculator"></i> Key Formulas</h2>
+                    <div class="formulas-grid">
+                        ${unit.formulas.map(formula => `
+                            <div class="formula-card">
+                                <h3>${formula.title}</h3>
+                                <p class="formula">${formula.formula}</p>
+                                <p>${formula.description}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <section class="content-section">
+                    <h2><i class="fas fa-video"></i> Video Tutorials</h2>
+                    <div class="videos-grid">
+                        ${unit.videos.map(video => `
+                            <div class="video-card">
+                                <h3>${video.title}</h3>
+                                <div class="video-wrapper">
+                                    <iframe src="${video.url}" 
+                                            title="${video.title}"
+                                            frameborder="0" 
+                                            allowfullscreen></iframe>
+                                </div>
+                                <p>${video.source}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <section class="content-section">
+                    <h2><i class="fas fa-clipboard-check"></i> Practice Problems</h2>
+                    <div class="practice-cards">
+                        ${unit.practiceLinks.map(link => `
+                            <a href="${link.href}" ${link.target ? `target="${link.target}"` : ''} class="practice-card">
+                                <i class="fas ${link.icon}"></i>
+                                <h4>${link.title}</h4>
+                                <p>${link.description}</p>
+                            </a>
+                        `).join('')}
+                    </div>
+                </section>
+            </div>
+
+            <div class="unit-sidebar">
+                <section class="content-section notes-section">
+                    <div class="notes-header">
+                        <h2><i class="fas fa-sticky-note"></i> Interactive Notes</h2>
+                        <div class="notes-actions">
+                            <button onclick="clearNotes('${unit.id}')" class="btn-small">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    <div class="notes-toolbar">
+                        <button onclick="formatText('bold', '${unit.id}')" title="Bold">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button onclick="formatText('italic', '${unit.id}')" title="Italic">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button onclick="formatText('underline', '${unit.id}')" title="Underline">
+                            <i class="fas fa-underline"></i>
+                        </button>
+                        <button onclick="addHighlight('${unit.id}')" title="Highlight">
+                            <i class="fas fa-highlighter"></i>
+                        </button>
+                        <button onclick="addEquation('${unit.id}')" title="Add Equation">
+                            <i class="fas fa-square-root-alt"></i>
+                        </button>
+                    </div>
+                    <div id="unit-notes" 
+                         class="notes-area" 
+                         contenteditable="true"
+                         data-placeholder="Type your notes here... You can highlight text from the PDF above and add your own comments, equations, and summaries.">
+                    </div>
+                    <div class="notes-footer">
+                        <small>Notes auto-save to your browser. Use highlighting for key concepts.</small>
+                    </div>
+                </section>
+
+                <section class="content-section">
+                    <h2><i class="fas fa-link"></i> Quick Links</h2>
+                    <div class="quick-links">
+                        ${unit.quickLinks.map(link => `
+                            <a href="${link.href}" class="quick-link">
+                                <i class="fas ${link.icon}"></i>
+                                <span>${link.text}</span>
+                            </a>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <section class="content-section">
+                    <h2><i class="fas fa-chart-line"></i> Study Progress</h2>
+                    <div class="progress-circle">
+                        <div class="circle" id="${unit.id}-progress-circle">
+                            <span>0%</span>
+                        </div>
+                        <div class="progress-info">
+                            <h3>${unit.title} Progress</h3>
+                            <p>Track your learning journey</p>
+                            <button onclick="updateProgress('${unit.id}', 25)" class="btn-small">
+                                +25% Progress
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="../script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNotes('${unit.id}');
+            loadPDF('${unit.pdfName}', 'pdf-container');
+            updateProgressCircle('${unit.id}');
+        });
+        
+        function markAsStudied(unitId) {
+            saveProgress(unitId, 100);
+            updateProgressCircle(unitId);
+            alert('Unit marked as studied! Progress saved.');
+        }
+        
+        function updateProgress(unitId, amount) {
+            const currentProgress = parseInt(localStorage.getItem('progress_' + unitId) || '0');
+            const newProgress = Math.min(currentProgress + amount, 100);
+            saveProgress(unitId, newProgress);
+            updateProgressCircle(unitId);
+        }
+        
+        function updateProgressCircle(unitId) {
+            const progress = parseInt(localStorage.getItem('progress_' + unitId) || '0');
+            const circle = document.getElementById(unitId + '-progress-circle');
+            if (circle) {
+                circle.style.background = 'conic-gradient(var(--primary) ' + progress + '%, var(--light-gray) ' + progress + '%)';
+                circle.querySelector('span').textContent = progress + '%';
+            }
+        }
+    </script>
+</body>
+</html>
+    `;
+}
+
+// Save this file as unit-template.js
