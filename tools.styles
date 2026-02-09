@@ -1,0 +1,387 @@
+/* Tools Page Specific Styles */
+
+.tools-grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.tool-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.tool-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--light-gray);
+}
+
+/* Calculator Styles */
+.calculator-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.calculator-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--light-gray);
+    margin-bottom: 1rem;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    color: var(--gray);
+    font-weight: 600;
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.calc-form {
+    background: #f8f9ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.calc-form h3 {
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    font-weight: 500;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.result {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 4px;
+    border-left: 4px solid var(--success);
+}
+
+.result h4 {
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+
+.result p {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: var(--accent);
+}
+
+/* Saved Calculations */
+.saved-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.saved-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid var(--primary);
+}
+
+.saved-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.calc-type {
+    padding: 0.25rem 0.75rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.calc-type.thermo { background: #e74c3c; }
+.calc-type.circuit { background: #2ecc71; }
+.calc-type.optics { background: #1abc9c; }
+.calc-type.modern { background: #34495e; }
+
+.calc-time {
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.calc-content {
+    font-family: 'Courier New', monospace;
+    color: var(--dark);
+}
+
+/* Timer Styles */
+.timer-container {
+    display: grid;
+    gap: 2rem;
+}
+
+.timer-display {
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 3rem;
+    border-radius: 10px;
+    color: white;
+}
+
+.time-circle {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: conic-gradient(var(--primary) 0%, var(--light-gray) 0%);
+    position: relative;
+}
+
+.time-circle:before {
+    content: '';
+    position: absolute;
+    width: 270px;
+    height: 270px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+}
+
+.time-text {
+    font-size: 4rem;
+    font-weight: bold;
+    position: relative;
+    z-index: 1;
+}
+
+.timer-label {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-warning {
+    background: var(--warning);
+}
+
+.btn-warning:hover {
+    background: #e1156d;
+}
+
+/* Timer Presets */
+.timer-presets, .custom-timer, .sessions-tracker, .timer-alerts {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.preset-btn {
+    padding: 1rem;
+    background: var(--light);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.preset-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.preset-time {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.preset-label {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-top: 0.25rem;
+}
+
+/* Custom Timer */
+.custom-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Sessions Tracker */
+.sessions-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 1rem 0;
+}
+
+.session-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.session-time {
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.session-duration {
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.session-label {
+    color: var(--dark);
+}
+
+.session-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--light-gray);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+/* Timer Alerts */
+.alert-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.alert-options label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.alert-sound {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.alert-sound select {
+    padding: 0.5rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 4px;
+    background: white;
+}
+
+/* Responsive Design for Timer */
+@media (max-width: 768px) {
+    .time-circle {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .time-circle:before {
+        width: 220px;
+        height: 220px;
+    }
+    
+    .time-text {
+        font-size: 3rem;
+    }
+    
+    .timer-controls {
+        flex-wrap: wrap;
+    }
+    
+    .custom-controls {
+        grid-template-columns: 1fr;
+    }
+}
