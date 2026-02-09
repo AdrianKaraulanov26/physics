@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards - AP Physics 2</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Flashcard specific styles */
+        .flashcards-container {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .card-form input {
+            padding: 0.75rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+            height: 300px;
+            margin: 2rem auto;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .flashcard-front {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--primary);
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        #card-front-text {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        #card-back-text {
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .flashcard-filter {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .flashcard-filter select {
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            background: white;
+        }
+
+        .flashcard-stats {
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-atom"></i>
+            <span>AP Physics 2 Hub</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="flashcards.html" class="active"><i class="fas fa-layer-group"></i> Flashcards</a></li>
+            <li><a href="tools/whiteboard.html"><i class="fas fa-draw-polygon"></i> Diagrams</a></li>
+            <li><a href="tools/practice.html"><i class="fas fa-clipboard-list"></i> Practice</a></li>
+            <li><a href="tools/calculator.html"><i class="fas fa-calculator"></i> Calculator</a></li>
+        </ul>
+        <div class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <main class="flashcards-container">
+        <h1><i class="fas fa-layer-group"></i> AP Physics 2 Flashcards</h1>
+        <p class="subtitle">Create, review, and master key concepts with interactive flashcards</p>
+
+        <!-- Flashcard Filter -->
+        <div class="flashcard-filter">
+            <div>
+                <label>Filter by Unit:</label>
+                <select id="unitFilter" onchange="filterFlashcards()">
+                    <option value="all">All Units</option>
+                    <option value="unit9">Unit 9: Thermodynamics</option>
+                    <option value="unit10">Unit 10: Electric Force</option>
+                    <option value="unit11">Unit 11: Circuits</option>
+                    <option value="unit12">Unit 12: Magnetism</option>
+                    <option value="unit13">Unit 13: Optics</option>
+                    <option value="unit14">Unit 14: Waves</option>
+                    <option value="unit15">Unit 15: Modern Physics</option>
+                </select>
+            </div>
+            <div>
+                <label>Sort by:</label>
+                <select id="sortFilter" onchange="sortFlashcards()">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="random">Random</option>
+                </select>
+            </div>
+            <button onclick="shuffleFlashcards()" class="btn">
+                <i class="fas fa-random"></i> Shuffle
+            </button>
+        </div>
+
+        <!-- Add Flashcard Form -->
+        <div class="card-form">
+            <h3><i class="fas fa-plus-circle"></i> Add New Flashcard</h3>
+            <input type="text" id="termInput" placeholder="Term / Question">
+            <input type="text" id="defInput" placeholder="Definition / Answer">
+            <select id="unitSelect">
+                <option value="unit9">Unit 9: Thermodynamics</option>
+                <option value="unit10">Unit 10: Electric Force</option>
+                <option value="unit11">Unit 11: Circuits</option>
+                <option value="unit12">Unit 12: Magnetism</option>
+                <option value="unit13">Unit 13: Optics</option>
+                <option value="unit14">Unit 14: Waves</option>
+                <option value="unit15">Unit 15: Modern Physics</option>
+            </select>
+            <button onclick="addFlashcard()" class="btn">
+                <i class="fas fa-plus"></i> Add Card
+            </button>
+        </div>
+
+        <!-- Flashcard Display -->
+        <div class="flashcard-container">
+            <div class="flashcard" onclick="toggleFlip()" id="currentFlashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <h2 id="card-front-text">Click to Flip</h2>
+                    </div>
+                    <div class="flashcard-back">
+                        <p id="card-back-text">Answer will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="controls">
+            <button onclick="prevCard()" class="btn">
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button onclick="toggleFlip()" class="btn">
+                <i class="fas fa-sync-alt"></i> Flip Card
+            </button>
+            <button onclick="nextCard()" class="btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Flashcard Stats -->
+        <div class="flashcard-stats">
+            <div class="stat">
+                <div class="stat-value" id="totalCards">0</div>
+                <div class="stat-label">Total Cards</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="currentPosition">0/0</div>
+                <div class="stat-label">Current Card</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="unitCards">0</div>
+                <div class="stat-label">This Unit</div>
+            </div>
+            <button onclick="exportFlashcards()" class="btn">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <button onclick="importFlashcards()" class="btn">
+                <i class="fas fa-upload"></i> Import
+            </button>
+        </div>
+
+        <!-- All Flashcards List -->
+        <div class="card-list-container">
+            <h3><i class="fas fa-list"></i> All Flashcards</h3>
+            <div id="flashcardsList"></div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Flashcard System
+        let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [
+            { 
+                front: "First Law of Thermodynamics", 
+                back: "ΔU = Q - W (Change in internal energy equals heat added minus work done)", 
+                unit: "unit9",
+                date: new Date().toISOString()
+            },
+            { 
+                front: "Ohm's Law", 
+                back: "V = IR (Voltage equals current times resistance)", 
+                unit: "unit11",
+                date: new Date().toISOString()
+            }
+        ];
+        
+        let currentCardIndex = 0;
+        let filteredFlashcards = [...flashcards];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCardDisplay();
+            updateStats();
+            displayAllFlashcards();
+        });
+
+        // Add new flashcard
+        function addFlashcard() {
+            const term = document.getElementById('termInput').value.trim();
+            const def = document.getElementById('defInput').value.trim();
+            const unit = document.getElementById('unitSelect').value;
+            
+            if (term && def) {
+                flashcards.push({
+                    front: term,
+                    back: def,
+                    unit: unit,
+                    date: new Date().toISOString()
+                });
+                
+                localStorage.setItem('flashcards', JSON.stringify(flashcards));
+                
+                // Clear inputs
+                document.getElementById('termInput').value = '';
+                document.getElementById('defInput').value = '';
+                
+                // Update display
+                filterFlashcards();
+                updateCardDisplay();
+                updateStats();
+                displayAllFlashcards();
+                
+                alert('Flashcard added!');
+            } else {
+                alert('Please enter both term and definition');
+            }
+        }
+
+        // Update card display
+        function updateCardDisplay() {
+            if (filteredFlashcards.length === 0) {
+                document.getElementById('card-front-text').innerText = "No flashcards yet";
+                document.getElementById('card-back-text').innerText = "Add your first flashcard!";
+                return;
+            }
+            
+            if (currentCardIndex >= filteredFlashcards.length) {
+                currentCardIndex = 0;
+            }
+            
+            const card = filteredFlashcards[currentCardIndex];
+            document.getElementById('card-front-text').innerText = card.front;
+            document.getElementById('card-back-text').innerText = card.back;
+            
+            // Reset to front
+            document.getElementById('currentFlashcard').classList.remove('flipped');
+            
+            // Update position display
+            document.getElementById('currentPosition').textContent = 
+                `${currentCardIndex + 1}/${filteredFlashcards.length}`;
+        }
+
+        // Navigation
+        function nextCard() {
+            if (filteredFlashcards.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % filteredFlashcards.length;
+            updateCardDisplay();
+        }
+
+        function prevCard() {
+            if (filteredFlashcards.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + filteredFlashcards.length) % filteredFlashcards.length;
+            updateCardDisplay();
+        }
+
+        function toggleFlip() {
+            document.getElementById('currentFlashcard').classList.toggle('flipped');
+        }
+
+        // Filter flashcards by unit
+        function filterFlashcards() {
+            const unit = document.getElementById('unitFilter').value;
+            
+            if (unit === 'all') {
+                filteredFlashcards = [...flashcards];
+            } else {
+                filteredFlashcards = flashcards.filter(card => card.unit === unit);
+            }
+            
+            currentCardIndex = 0;
+            updateCardDisplay();
+            updateStats();
+        }
+
+        // Sort flashcards
+        function sortFlashcards() {
+            const sortBy = document.getElementById('sortFilter').value;
+            
+            switch(sortBy) {
+                case 'newest':
+                    filteredFlashcards.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+                case 'oldest':
+                    filteredFlashcards.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    break;
+                case 'random':
+                    filteredFlashcards.sort(() => Math.random() - 0.5);
+                    break;
+            }
+            
+            currentCardIndex = 0;
+            updateCardDisplay();
+        }
+
+        function shuffleFlashcards() {
+            filteredFlashcards.sort(() => Math.random() - 0.5);
+            currentCardIndex = 0;
+            updateCardDisplay();
+            document.getElementById('sortFilter').value = 'random';
+        }
+
+        // Update statistics
+        function updateStats() {
+            const unit = document.getElementById('unitFilter').value;
+            const unitCards = unit === 'all' 
+                ? flashcards.length 
+                : flashcards.filter(card => card.unit === unit).length;
+            
+            document.getElementById('totalCards').textContent = flashcards.length;
+            document.getElementById('unitCards').textContent = unitCards;
+            document.getElementById('currentPosition').textContent = 
+                filteredFlashcards.length > 0 ? `${currentCardIndex + 1}/${filteredFlashcards.length}` : '0/0';
+        }
+
+        // Display all flashcards in a list
+        function displayAllFlashcards() {
+            const container = document.getElementById('flashcardsList');
+            const unit = document.getElementById('unitFilter').value;
+            const cardsToShow = unit === 'all' ? flashcards : flashcards.filter(card => card.unit === unit);
+            
+            if (cardsToShow.length === 0) {
+                container.innerHTML = '<p>No flashcards yet. Add some above!</p>';
+                return;
+            }
+            
+            container.innerHTML = cardsToShow.map((card, index) => `
+                <div class="flashcard-item">
+                    <div class="flashcard-item-header">
+                        <span class="unit-badge ${card.unit}">${getUnitName(card.unit)}</span>
+                        <button onclick="deleteFlashcard(${index})" class="btn-small">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="flashcard-item-content">
+                        <strong>Q:</strong> ${card.front}<br>
+                        <strong>A:</strong> ${card.back}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add styles for list view
+            const style = document.createElement('style');
+            style.textContent = `
+                .flashcard-item {
+                    background: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    margin-bottom: 1rem;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .flashcard-item-header {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 0.5rem;
+                }
+                .unit-badge {
+                    padding: 0.25rem 0.75rem;
+                    border-radius: 4px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    color: white;
+                }
+                .unit-badge.unit9 { background: #e74c3c; }
+                .unit-badge.unit10 { background: #3498db; }
+                .unit-badge.unit11 { background: #2ecc71; }
+                .unit-badge.unit12 { background: #9b59b6; }
+                .unit-badge.unit13 { background: #1abc9c; }
+                .unit-badge.unit14 { background: #f39c12; }
+                .unit-badge.unit15 { background: #34495e; }
+                .flashcard-item-content {
+                    line-height: 1.6;
+                }
+                .btn-small {
+                    padding: 0.25rem 0.5rem;
+                    font-size: 0.8rem;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function getUnitName(unitKey) {
+            const units = {
+                'unit9': 'Unit 9',
+                'unit10': 'Unit 10',
+                'unit11': 'Unit 11',
+                'unit12': 'Unit 12',
+                'unit13': 'Unit 13',
+                'unit14': 'Unit 14',
+                'unit15': 'Unit 15'
+            };
+            return units[unitKey] || unitKey;
+        }
+
+        function deleteFlashcard(index) {
+            if (confirm('Delete this flashcard?')) {
+                // Find global index from filtered index
+                const card = filteredFlashcards[currentCardIndex];
+                const globalIndex = flashcards.findIndex(fc => 
+                    fc.front === card.front && fc.back === card.back);
+                
+                if (globalIndex > -1) {
+                    flashcards.splice(globalIndex, 1);
+                    localStorage.setItem('flashcards', JSON.stringify(flashcards));
+                    
+                    // Update everything
+                    filterFlashcards();
+                    updateCardDisplay();
+                    updateStats();
+                    displayAllFlashcards();
+                }
+            }
+        }
+
+        // Export/Import functions
+        function exportFlashcards() {
+            const dataStr = JSON.stringify(flashcards, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'ap-physics-flashcards.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importFlashcards() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const importedCards = JSON.parse(e.target.result);
+                        flashcards.push(...importedCards);
+                        localStorage.setItem('flashcards', JSON.stringify(flashcards));
+                        
+                        filterFlashcards();
+                        updateCardDisplay();
+                        updateStats();
+                        displayAllFlashcards();
+                        
+                        alert(`Imported ${importedCards.length} flashcards successfully!`);
+                    } catch (error) {
+                        alert('Error importing flashcards. Please check the file format.');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+    </script>
+</body>
+</html>
